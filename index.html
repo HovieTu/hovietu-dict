@@ -215,6 +215,17 @@
   td.word .headword{ font-family: 'Fraunces', serif; font-size: 19px; color: var(--accent-soft); display: block; }
   td.word .ipa{ font-size: 12px; color: var(--paper-dim); display: block; margin-top: 2px; }
 
+  .pos-tag{
+    display: inline-block;
+    font-size: 10.5px;
+    font-style: italic;
+    color: var(--accent-soft);
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-top: 4px;
+  }
+
   td.topic{ padding-top: 17px; }
 
   .pill{
@@ -447,6 +458,7 @@
             <span class="pill fc-topic-tag" id="fcTopicTag"></span>
             <span class="headword" id="fcWord"></span>
             <span class="ipa" id="fcIpa"></span>
+            <span class="pos-tag" id="fcPos"></span>
             <span class="hint">Nhấp để xem nghĩa</span>
           </div>
           <div class="fc-face fc-back">
@@ -482,11 +494,17 @@
     </div>
   </section>
 
-  <footer>Nhấp vào ô vuông (danh sách) hoặc nút "Đánh dấu đã học" (flashcard) để lưu tiến độ. Trạng thái chỉ được lưu trong phiên xem hiện tại.</footer>
+  <footer>Nhấp vào ô vuông (danh sách) hoặc nút "Đánh dấu đã học" (flashcard) để lưu tiến độ. Trạng thái chỉ được lưu trong phiên xem hiện tại. Từ loại: n = danh từ, v = động từ, adj = tính từ.</footer>
 
 </div>
 
 <script>
+const POS_LABELS = {
+  n:   { abbr: "n", full: "danh từ" },
+  v:   { abbr: "v", full: "động từ" },
+  adj: { abbr: "adj", full: "tính từ" },
+};
+
 const TOPICS = {
   environment: { label: "Môi trường & Tác động", color: "var(--t-env)" },
   heritage:    { label: "Di sản & Văn hoá",       color: "var(--t-heritage)" },
@@ -496,66 +514,66 @@ const TOPICS = {
 };
 
 const data = [
-  {w:"voracious", ipa:"/vəˈreɪʃəs/", topic:"business", m:"tham lam, ham mê tột độ (ăn/đọc/học)", e:"She has a voracious appetite for knowledge, reading three books a week."},
-  {w:"enhance", ipa:"/ɪnˈhæns/", topic:"business", m:"nâng cao, cải thiện", e:"Regular exercise can enhance both your mood and your memory."},
-  {w:"appetite", ipa:"/ˈæpɪtaɪt/", topic:"business", m:"sự thèm ăn; ham muốn, khát khao", e:"Traveling abroad gave him a real appetite for adventure."},
-  {w:"consumption", ipa:"/kənˈsʌmpʃən/", topic:"environment", m:"sự tiêu thụ", e:"The government is trying to reduce fossil fuel consumption."},
-  {w:"exposure", ipa:"/ɪkˈspoʊʒər/", topic:"environment", m:"sự phơi bày, sự tiếp xúc", e:"Long exposure to sunlight can damage the skin."},
-  {w:"indiscriminate", ipa:"/ˌɪndɪˈskrɪmɪnət/", topic:"environment", m:"bừa bãi, không phân biệt", e:"The bombing caused indiscriminate destruction across the city."},
-  {w:"condemn", ipa:"/kənˈdɛm/", topic:"environment", m:"lên án, chỉ trích gay gắt", e:"Human rights groups condemned the violent crackdown."},
-  {w:"degradation", ipa:"/ˌdɛɡrəˈdeɪʃən/", topic:"environment", m:"sự suy thoái, xuống cấp", e:"Deforestation has led to serious environmental degradation."},
-  {w:"disposal", ipa:"/dɪˈspoʊzəl/", topic:"environment", m:"sự vứt bỏ, xử lý (rác thải)", e:"The factory was fined for illegal waste disposal."},
-  {w:"contaminate", ipa:"/kənˈtæmɪneɪt/", topic:"environment", m:"làm ô nhiễm, làm bẩn", e:"Chemical spills can contaminate rivers and groundwater."},
-  {w:"eminent", ipa:"/ˈɛmɪnənt/", topic:"debate", m:"lỗi lạc, xuất chúng", e:"She consulted an eminent professor of economics."},
-  {w:"imminent", ipa:"/ˈɪmɪnənt/", topic:"debate", m:"sắp xảy ra, cận kề", e:"Forecasters warned that a storm was imminent."},
-  {w:"prominent", ipa:"/ˈprɒmɪnənt/", topic:"debate", m:"nổi bật, có tiếng", e:"He played a prominent role in the peace negotiations."},
-  {w:"collapse", ipa:"/kəˈlæps/", topic:"life", m:"sụp đổ, suy sụp", e:"The old bridge collapsed after years of neglect."},
-  {w:"decisive", ipa:"/dɪˈsaɪsɪv/", topic:"business", m:"quyết đoán; mang tính quyết định", e:"The coach made a decisive substitution in the final minutes."},
-  {w:"steeped (in)", ipa:"/stiːpt/", topic:"heritage", m:"đắm chìm, thấm đẫm trong", e:"The town is steeped in centuries of tradition."},
-  {w:"immersed (in)", ipa:"/ɪˈmɜːrst/", topic:"heritage", m:"chìm đắm, đắm mình trong", e:"She was completely immersed in her new novel."},
-  {w:"reflect", ipa:"/rɪˈflɛkt/", topic:"heritage", m:"phản ánh; suy ngẫm", e:"His paintings reflect his fascination with the sea."},
-  {w:"preserve", ipa:"/prɪˈzɜːrv/", topic:"heritage", m:"bảo tồn, gìn giữ", e:"The organization works to preserve endangered languages."},
-  {w:"landmark", ipa:"/ˈlændmɑːrk/", topic:"heritage", m:"mốc son, công trình mang tính bước ngoặt", e:"The court's ruling was a landmark decision for civil rights."},
-  {w:"replete (with)", ipa:"/rɪˈpliːt/", topic:"heritage", m:"đầy ắp, chứa đầy", e:"The museum's archive is replete with rare manuscripts."},
-  {w:"curate", ipa:"/ˈkjʊəreɪt/", topic:"heritage", m:"tuyển chọn, phụ trách (triển lãm, nội dung)", e:"She was asked to curate an exhibition of ancient pottery."},
-  {w:"artifact", ipa:"/ˈɑːrtɪfækt/", topic:"heritage", m:"hiện vật, cổ vật", e:"Archaeologists uncovered a bronze artifact from the tomb."},
-  {w:"intricate", ipa:"/ˈɪntrɪkət/", topic:"heritage", m:"phức tạp, tinh vi", e:"The necklace features an intricate pattern of silver threads."},
-  {w:"narrative", ipa:"/ˈnærətɪv/", topic:"heritage", m:"câu chuyện, mạch tường thuật", e:"The film follows a nonlinear narrative structure."},
-  {w:"abound (in/with)", ipa:"/əˈbaʊnd/", topic:"heritage", m:"có rất nhiều, phong phú", e:"The coastal waters abound with colorful fish."},
-  {w:"flourish", ipa:"/ˈflɜːrɪʃ/", topic:"business", m:"phát triển mạnh, hưng thịnh", e:"Small businesses flourished after the new policy was introduced."},
-  {w:"entrepreneur", ipa:"/ˌɑːntrəprəˈnɜːr/", topic:"business", m:"doanh nhân khởi nghiệp", e:"The young entrepreneur launched her startup at twenty-two."},
-  {w:"innovator", ipa:"/ˈɪnəveɪtər/", topic:"business", m:"người đổi mới, nhà cải tiến", e:"He is regarded as one of the leading innovators in renewable energy."},
-  {w:"intense", ipa:"/ɪnˈtɛns/", topic:"life", m:"mãnh liệt, dữ dội", e:"The competition between the two teams was intense."},
-  {w:"prognosticate", ipa:"/prəɡˈnɒstɪkeɪt/", topic:"debate", m:"tiên đoán, dự báo trước", e:"Economists tried to prognosticate how the market would react."},
-  {w:"contend", ipa:"/kənˈtɛnd/", topic:"debate", m:"khẳng định, tranh luận; đấu tranh", e:"Critics contend that the policy will harm small farmers."},
-  {w:"inevitable", ipa:"/ɪnˈɛvɪtəbəl/", topic:"debate", m:"không thể tránh khỏi, tất yếu", e:"Some conflict was inevitable given their opposing views."},
-  {w:"disruptive", ipa:"/dɪsˈrʌptɪv/", topic:"business", m:"gây gián đoạn, phá vỡ trật tự cũ", e:"The startup introduced a disruptive technology that reshaped the industry."},
-  {w:"divided", ipa:"/dɪˈvaɪdɪd/", topic:"debate", m:"bị chia rẽ", e:"Public opinion remains divided on the new law."},
-  {w:"paradox", ipa:"/ˈpærədɒks/", topic:"debate", m:"nghịch lý", e:"It's a paradox that the more choices we have, the less satisfied we feel."},
-  {w:"dilemma", ipa:"/dɪˈlɛmə/", topic:"debate", m:"tình huống khó xử, thế lưỡng nan", e:"She faced a difficult dilemma between career and family."},
-  {w:"irony", ipa:"/ˈaɪrəni/", topic:"debate", m:"sự mỉa mai, trớ trêu", e:"It was a bitter irony that the rescuer himself needed rescuing."},
-  {w:"blur", ipa:"/blɜːr/", topic:"life", m:"làm mờ, nhòe đi", e:"The fast-moving train became a blur through the window."},
-  {w:"enduring", ipa:"/ɪnˈdʊrɪŋ/", topic:"business", m:"lâu bền, bền vững theo thời gian", e:"Their friendship has proven remarkably enduring over the decades."},
-  {w:"realm", ipa:"/rɛlm/", topic:"heritage", m:"lĩnh vực, phạm vi; vương quốc", e:"The discovery opened up a whole new realm of possibilities."},
-  {w:"speculative", ipa:"/ˈspɛkjʊlətɪv/", topic:"business", m:"mang tính suy đoán, đầu cơ", e:"Investors were warned that the project was highly speculative."},
-  {w:"embed", ipa:"/ɪmˈbɛd/", topic:"life", m:"gắn chặt, cắm sâu, nhúng vào", e:"The company embedded a tracking chip in every product."},
-  {w:"oppose", ipa:"/əˈpoʊz/", topic:"debate", m:"phản đối", e:"Local residents strongly opposed the construction of the highway."},
-  {w:"associate", ipa:"/əˈsoʊʃieɪt/", topic:"debate", m:"liên kết, gắn liền với; đồng nghiệp", e:"People often associate the color red with danger."},
-  {w:"annals", ipa:"/ˈænəlz/", topic:"heritage", m:"biên niên sử, sử sách", e:"His achievements are recorded in the annals of medical history."},
-  {w:"controversial", ipa:"/ˌkɒntrəˈvɜːrʃəl/", topic:"debate", m:"gây tranh cãi", e:"The politician's remarks sparked a controversial debate."},
-  {w:"dispute", ipa:"/dɪˈspjuːt/", topic:"debate", m:"tranh chấp, tranh cãi", e:"The two countries are locked in a border dispute."},
-  {w:"intellectual", ipa:"/ˌɪntəˈlɛktʃuəl/", topic:"heritage", m:"trí thức; thuộc về trí tuệ", e:"The café was a gathering place for artists and intellectuals."},
-  {w:"chronicle", ipa:"/ˈkrɒnɪkəl/", topic:"heritage", m:"ghi chép biên niên; biên niên sử", e:"The documentary chronicles the rise and fall of the empire."},
-  {w:"compound", ipa:"/kəmˈpaʊnd/", topic:"environment", m:"hợp chất; làm trầm trọng thêm", e:"Missing the deadline only compounded her stress."},
-  {w:"foster", ipa:"/ˈfɒstər/", topic:"business", m:"nuôi dưỡng, thúc đẩy (sự phát triển)", e:"The program aims to foster creativity among young students."},
-  {w:"frustrated", ipa:"/frʌˈstreɪtɪd/", topic:"life", m:"thất vọng, bực bội", e:"He grew frustrated after hours of fruitless searching."},
-  {w:"malfunction", ipa:"/ˌmælˈfʌŋkʃən/", topic:"environment", m:"trục trặc, hỏng hóc", e:"The spacecraft's systems began to malfunction mid-flight."},
-  {w:"anticipate", ipa:"/ænˈtɪsɪpeɪt/", topic:"business", m:"mong đợi, dự đoán trước", e:"We anticipate strong demand for the product this holiday season."},
-  {w:"drudgery", ipa:"/ˈdrʌdʒəri/", topic:"life", m:"công việc nhàm chán, cực nhọc", e:"Farm life in those days was full of endless drudgery."},
-  {w:"pure", ipa:"/pjʊər/", topic:"life", m:"tinh khiết, thuần khiết", e:"The spring water here is remarkably pure."},
-  {w:"variation", ipa:"/ˌvɛəriˈeɪʃən/", topic:"life", m:"sự biến đổi, biến thể", e:"There is significant variation in prices between the two stores."},
-  {w:"skeptical", ipa:"/ˈskɛptɪkəl/", topic:"debate", m:"hoài nghi", e:"She remained skeptical of claims that the diet worked."},
-  {w:"displace", ipa:"/dɪsˈpleɪs/", topic:"environment", m:"thay thế; làm dịch chuyển, di dời", e:"Rising sea levels have already displaced thousands of coastal residents."}
+  {w:"voracious", ipa:"/vəˈreɪʃəs/", topic:"business", pos:"adj", m:"tham lam, ham mê tột độ (ăn/đọc/học)", e:"She has a voracious appetite for knowledge, reading three books a week."},
+  {w:"enhance", ipa:"/ɪnˈhæns/", topic:"business", pos:"v", m:"nâng cao, cải thiện", e:"Regular exercise can enhance both your mood and your memory."},
+  {w:"appetite", ipa:"/ˈæpɪtaɪt/", topic:"business", pos:"n", m:"sự thèm ăn; ham muốn, khát khao", e:"Traveling abroad gave him a real appetite for adventure."},
+  {w:"consumption", ipa:"/kənˈsʌmpʃən/", topic:"environment", pos:"n", m:"sự tiêu thụ", e:"The government is trying to reduce fossil fuel consumption."},
+  {w:"exposure", ipa:"/ɪkˈspoʊʒər/", topic:"environment", pos:"n", m:"sự phơi bày, sự tiếp xúc", e:"Long exposure to sunlight can damage the skin."},
+  {w:"indiscriminate", ipa:"/ˌɪndɪˈskrɪmɪnət/", topic:"environment", pos:"adj", m:"bừa bãi, không phân biệt", e:"The bombing caused indiscriminate destruction across the city."},
+  {w:"condemn", ipa:"/kənˈdɛm/", topic:"environment", pos:"v", m:"lên án, chỉ trích gay gắt", e:"Human rights groups condemned the violent crackdown."},
+  {w:"degradation", ipa:"/ˌdɛɡrəˈdeɪʃən/", topic:"environment", pos:"n", m:"sự suy thoái, xuống cấp", e:"Deforestation has led to serious environmental degradation."},
+  {w:"disposal", ipa:"/dɪˈspoʊzəl/", topic:"environment", pos:"n", m:"sự vứt bỏ, xử lý (rác thải)", e:"The factory was fined for illegal waste disposal."},
+  {w:"contaminate", ipa:"/kənˈtæmɪneɪt/", topic:"environment", pos:"v", m:"làm ô nhiễm, làm bẩn", e:"Chemical spills can contaminate rivers and groundwater."},
+  {w:"eminent", ipa:"/ˈɛmɪnənt/", topic:"debate", pos:"adj", m:"lỗi lạc, xuất chúng", e:"She consulted an eminent professor of economics."},
+  {w:"imminent", ipa:"/ˈɪmɪnənt/", topic:"debate", pos:"adj", m:"sắp xảy ra, cận kề", e:"Forecasters warned that a storm was imminent."},
+  {w:"prominent", ipa:"/ˈprɒmɪnənt/", topic:"debate", pos:"adj", m:"nổi bật, có tiếng", e:"He played a prominent role in the peace negotiations."},
+  {w:"collapse", ipa:"/kəˈlæps/", topic:"life", pos:"v", m:"sụp đổ, suy sụp", e:"The old bridge collapsed after years of neglect."},
+  {w:"decisive", ipa:"/dɪˈsaɪsɪv/", topic:"business", pos:"adj", m:"quyết đoán; mang tính quyết định", e:"The coach made a decisive substitution in the final minutes."},
+  {w:"steeped (in)", ipa:"/stiːpt/", topic:"heritage", pos:"adj", m:"đắm chìm, thấm đẫm trong", e:"The town is steeped in centuries of tradition."},
+  {w:"immersed (in)", ipa:"/ɪˈmɜːrst/", topic:"heritage", pos:"adj", m:"chìm đắm, đắm mình trong", e:"She was completely immersed in her new novel."},
+  {w:"reflect", ipa:"/rɪˈflɛkt/", topic:"heritage", pos:"v", m:"phản ánh; suy ngẫm", e:"His paintings reflect his fascination with the sea."},
+  {w:"preserve", ipa:"/prɪˈzɜːrv/", topic:"heritage", pos:"v", m:"bảo tồn, gìn giữ", e:"The organization works to preserve endangered languages."},
+  {w:"landmark", ipa:"/ˈlændmɑːrk/", topic:"heritage", pos:"n", m:"mốc son, công trình mang tính bước ngoặt", e:"The court's ruling was a landmark decision for civil rights."},
+  {w:"replete (with)", ipa:"/rɪˈpliːt/", topic:"heritage", pos:"adj", m:"đầy ắp, chứa đầy", e:"The museum's archive is replete with rare manuscripts."},
+  {w:"curate", ipa:"/ˈkjʊəreɪt/", topic:"heritage", pos:"v", m:"tuyển chọn, phụ trách (triển lãm, nội dung)", e:"She was asked to curate an exhibition of ancient pottery."},
+  {w:"artifact", ipa:"/ˈɑːrtɪfækt/", topic:"heritage", pos:"n", m:"hiện vật, cổ vật", e:"Archaeologists uncovered a bronze artifact from the tomb."},
+  {w:"intricate", ipa:"/ˈɪntrɪkət/", topic:"heritage", pos:"adj", m:"phức tạp, tinh vi", e:"The necklace features an intricate pattern of silver threads."},
+  {w:"narrative", ipa:"/ˈnærətɪv/", topic:"heritage", pos:"n", m:"câu chuyện, mạch tường thuật", e:"The film follows a nonlinear narrative structure."},
+  {w:"abound (in/with)", ipa:"/əˈbaʊnd/", topic:"heritage", pos:"v", m:"có rất nhiều, phong phú", e:"The coastal waters abound with colorful fish."},
+  {w:"flourish", ipa:"/ˈflɜːrɪʃ/", topic:"business", pos:"v", m:"phát triển mạnh, hưng thịnh", e:"Small businesses flourished after the new policy was introduced."},
+  {w:"entrepreneur", ipa:"/ˌɑːntrəprəˈnɜːr/", topic:"business", pos:"n", m:"doanh nhân khởi nghiệp", e:"The young entrepreneur launched her startup at twenty-two."},
+  {w:"innovator", ipa:"/ˈɪnəveɪtər/", topic:"business", pos:"n", m:"người đổi mới, nhà cải tiến", e:"He is regarded as one of the leading innovators in renewable energy."},
+  {w:"intense", ipa:"/ɪnˈtɛns/", topic:"life", pos:"adj", m:"mãnh liệt, dữ dội", e:"The competition between the two teams was intense."},
+  {w:"prognosticate", ipa:"/prəɡˈnɒstɪkeɪt/", topic:"debate", pos:"v", m:"tiên đoán, dự báo trước", e:"Economists tried to prognosticate how the market would react."},
+  {w:"contend", ipa:"/kənˈtɛnd/", topic:"debate", pos:"v", m:"khẳng định, tranh luận; đấu tranh", e:"Critics contend that the policy will harm small farmers."},
+  {w:"inevitable", ipa:"/ɪnˈɛvɪtəbəl/", topic:"debate", pos:"adj", m:"không thể tránh khỏi, tất yếu", e:"Some conflict was inevitable given their opposing views."},
+  {w:"disruptive", ipa:"/dɪsˈrʌptɪv/", topic:"business", pos:"adj", m:"gây gián đoạn, phá vỡ trật tự cũ", e:"The startup introduced a disruptive technology that reshaped the industry."},
+  {w:"divided", ipa:"/dɪˈvaɪdɪd/", topic:"debate", pos:"adj", m:"bị chia rẽ", e:"Public opinion remains divided on the new law."},
+  {w:"paradox", ipa:"/ˈpærədɒks/", topic:"debate", pos:"n", m:"nghịch lý", e:"It's a paradox that the more choices we have, the less satisfied we feel."},
+  {w:"dilemma", ipa:"/dɪˈlɛmə/", topic:"debate", pos:"n", m:"tình huống khó xử, thế lưỡng nan", e:"She faced a difficult dilemma between career and family."},
+  {w:"irony", ipa:"/ˈaɪrəni/", topic:"debate", pos:"n", m:"sự mỉa mai, trớ trêu", e:"It was a bitter irony that the rescuer himself needed rescuing."},
+  {w:"blur", ipa:"/blɜːr/", topic:"life", pos:"n", m:"làm mờ, nhòe đi", e:"The fast-moving train became a blur through the window."},
+  {w:"enduring", ipa:"/ɪnˈdʊrɪŋ/", topic:"business", pos:"adj", m:"lâu bền, bền vững theo thời gian", e:"Their friendship has proven remarkably enduring over the decades."},
+  {w:"realm", ipa:"/rɛlm/", topic:"heritage", pos:"n", m:"lĩnh vực, phạm vi; vương quốc", e:"The discovery opened up a whole new realm of possibilities."},
+  {w:"speculative", ipa:"/ˈspɛkjʊlətɪv/", topic:"business", pos:"adj", m:"mang tính suy đoán, đầu cơ", e:"Investors were warned that the project was highly speculative."},
+  {w:"embed", ipa:"/ɪmˈbɛd/", topic:"life", pos:"v", m:"gắn chặt, cắm sâu, nhúng vào", e:"The company embedded a tracking chip in every product."},
+  {w:"oppose", ipa:"/əˈpoʊz/", topic:"debate", pos:"v", m:"phản đối", e:"Local residents strongly opposed the construction of the highway."},
+  {w:"associate", ipa:"/əˈsoʊʃieɪt/", topic:"debate", pos:"v", m:"liên kết, gắn liền với; đồng nghiệp", e:"People often associate the color red with danger."},
+  {w:"annals", ipa:"/ˈænəlz/", topic:"heritage", pos:"n", m:"biên niên sử, sử sách", e:"His achievements are recorded in the annals of medical history."},
+  {w:"controversial", ipa:"/ˌkɒntrəˈvɜːrʃəl/", topic:"debate", pos:"adj", m:"gây tranh cãi", e:"The politician's remarks sparked a controversial debate."},
+  {w:"dispute", ipa:"/dɪˈspjuːt/", topic:"debate", pos:"n", m:"tranh chấp, tranh cãi", e:"The two countries are locked in a border dispute."},
+  {w:"intellectual", ipa:"/ˌɪntəˈlɛktʃuəl/", topic:"heritage", pos:"n", m:"trí thức; thuộc về trí tuệ", e:"The café was a gathering place for artists and intellectuals."},
+  {w:"chronicle", ipa:"/ˈkrɒnɪkəl/", topic:"heritage", pos:"v", m:"ghi chép biên niên; biên niên sử", e:"The documentary chronicles the rise and fall of the empire."},
+  {w:"compound", ipa:"/kəmˈpaʊnd/", topic:"environment", pos:"v", m:"hợp chất; làm trầm trọng thêm", e:"Missing the deadline only compounded her stress."},
+  {w:"foster", ipa:"/ˈfɒstər/", topic:"business", pos:"v", m:"nuôi dưỡng, thúc đẩy (sự phát triển)", e:"The program aims to foster creativity among young students."},
+  {w:"frustrated", ipa:"/frʌˈstreɪtɪd/", topic:"life", pos:"adj", m:"thất vọng, bực bội", e:"He grew frustrated after hours of fruitless searching."},
+  {w:"malfunction", ipa:"/ˌmælˈfʌŋkʃən/", topic:"environment", pos:"v", m:"trục trặc, hỏng hóc", e:"The spacecraft's systems began to malfunction mid-flight."},
+  {w:"anticipate", ipa:"/ænˈtɪsɪpeɪt/", topic:"business", pos:"v", m:"mong đợi, dự đoán trước", e:"We anticipate strong demand for the product this holiday season."},
+  {w:"drudgery", ipa:"/ˈdrʌdʒəri/", topic:"life", pos:"n", m:"công việc nhàm chán, cực nhọc", e:"Farm life in those days was full of endless drudgery."},
+  {w:"pure", ipa:"/pjʊər/", topic:"life", pos:"adj", m:"tinh khiết, thuần khiết", e:"The spring water here is remarkably pure."},
+  {w:"variation", ipa:"/ˌvɛəriˈeɪʃən/", topic:"life", pos:"n", m:"sự biến đổi, biến thể", e:"There is significant variation in prices between the two stores."},
+  {w:"skeptical", ipa:"/ˈskɛptɪkəl/", topic:"debate", pos:"adj", m:"hoài nghi", e:"She remained skeptical of claims that the diet worked."},
+  {w:"displace", ipa:"/dɪsˈpleɪs/", topic:"environment", pos:"v", m:"thay thế; làm dịch chuyển, di dời", e:"Rising sea levels have already displaced thousands of coastal residents."}
 ];
 
 data.forEach((d, i) => d.id = i);
@@ -642,7 +660,7 @@ function renderList(){
     tr.innerHTML = `
       <td class="no">${String(item.id + 1).padStart(2, '0')}</td>
       <td><input type="checkbox" class="checkbox" ${item.learned ? 'checked' : ''}></td>
-      <td class="word"><span class="headword">${item.w}</span><span class="ipa">${item.ipa}</span></td>
+      <td class="word"><span class="headword">${item.w}</span><span class="ipa">${item.ipa}</span><span class="pos-tag" title="${POS_LABELS[item.pos].full}">${POS_LABELS[item.pos].abbr}</span></td>
       <td class="topic"><span class="pill" style="background:${t.color}">${t.label}</span></td>
       <td class="meaning">${item.m}</td>
       <td class="example">${item.e}</td>
@@ -697,6 +715,7 @@ const flashcardEl = document.getElementById('flashcard');
 const fcCounter = document.getElementById('fcCounter');
 const fcWord = document.getElementById('fcWord');
 const fcIpa = document.getElementById('fcIpa');
+const fcPos = document.getElementById('fcPos');
 const fcTopicTag = document.getElementById('fcTopicTag');
 const fcMeaning = document.getElementById('fcMeaning');
 const fcExample = document.getElementById('fcExample');
@@ -731,6 +750,8 @@ function renderFlashcard(){
   const t = TOPICS[item.topic];
   fcWord.textContent = item.w;
   fcIpa.textContent = item.ipa;
+  fcPos.textContent = POS_LABELS[item.pos].abbr;
+  fcPos.title = POS_LABELS[item.pos].full;
   fcTopicTag.textContent = t.label;
   fcTopicTag.style.background = t.color;
   fcMeaning.textContent = item.m;
