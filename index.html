@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bộ sưu tập từ vựng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #1B2420;
+    --ink-soft: #232F29;
+    --ink-softer: #2A3730;
+    --paper: #ECE7D8;
+    --paper-dim: #B9B2A0;
+    --accent: #C98A3B;
+    --accent-soft: #E0AE6C;
+    --rust: #8B4A3C;
+    --line: rgba(236,231,216,0.14);
+    --line-strong: rgba(236,231,216,0.28);
+    --t-env: #6E9469;
+    --t-heritage: #C98A3B;
+    --t-business: #4E85A0;
+    --t-debate: #A15C4C;
+    --t-life: #9C86C4;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin: 0;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Work Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap{
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 56px 24px 90px;
+  }
+
+  header{
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 32px;
+    margin-bottom: 28px;
+  }
+
+  .tag{
+    font-size: 13px;
+    color: var(--accent-soft);
+    letter-spacing: 0.02em;
+    margin: 0 0 14px;
+  }
+
+  h1{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(34px, 5.5vw, 52px);
+    line-height: 1.08;
+    margin: 0 0 16px;
+    color: var(--paper);
+  }
+
+  h1 em{
+    font-style: italic;
+    color: var(--accent-soft);
+  }
+
+  .lede{
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--paper-dim);
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  .stats{
+    display: flex;
+    gap: 28px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+
+  .stat{ font-family: 'Fraunces', serif; }
+  .stat .num{ font-size: 28px; color: var(--accent-soft); display: block; line-height: 1; }
+  .stat .label{ font-size: 12.5px; color: var(--paper-dim); font-family: 'Work Sans', sans-serif; margin-top: 6px; display: block; }
+
+  /* Tabs */
+  .tabs{
+    display: flex;
+    gap: 4px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tab-btn{
+    background: none;
+    border: none;
+    color: var(--paper-dim);
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14.5px;
+    font-weight: 500;
+    padding: 10px 4px;
+    margin-right: 22px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color .15s ease, border-color .15s ease;
+  }
+
+  .tab-btn:hover{ color: var(--paper); }
+  .tab-btn.active{ color: var(--accent-soft); border-bottom-color: var(--accent); }
+
+  .view{ display: none; }
+  .view.active{ display: block; }
+
+  /* Topic pills */
+  .topic-row{
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .topic-pill{
+    background: none;
+    border: 1px solid var(--line-strong);
+    color: var(--paper-dim);
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-family: 'Work Sans', sans-serif;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all .15s ease;
+  }
+
+  .topic-pill .dot{ width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .topic-pill:hover{ color: var(--paper); border-color: var(--paper-dim); }
+  .topic-pill.active{ background: var(--ink-softer); border-color: var(--paper-dim); color: var(--paper); }
+
+  /* List controls */
+  .controls{
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+
+  .search{ flex: 1; min-width: 220px; }
+
+  .search input{
+    width: 100%;
+    background: var(--ink-soft);
+    border: 1px solid var(--line-strong);
+    color: var(--paper);
+    padding: 12px 16px;
+    border-radius: 3px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14.5px;
+    outline: none;
+    transition: border-color .15s ease;
+  }
+
+  .search input::placeholder{ color: var(--paper-dim); }
+  .search input:focus{ border-color: var(--accent); }
+
+  .filter-btn{
+    background: none;
+    border: 1px solid var(--line-strong);
+    color: var(--paper-dim);
+    padding: 12px 16px;
+    border-radius: 3px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 13.5px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .15s ease;
+  }
+
+  .filter-btn:hover{ color: var(--paper); border-color: var(--paper-dim); }
+  .filter-btn.active{ background: var(--accent); border-color: var(--accent); color: var(--ink); font-weight: 500; }
+
+  /* Table */
+  table{ width: 100%; border-collapse: collapse; }
+
+  thead th{
+    text-align: left;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 500;
+    font-size: 12.5px;
+    color: var(--paper-dim);
+    padding: 0 10px 12px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  thead th.col-no{ width: 40px; }
+  thead th.col-check{ width: 36px; }
+  thead th.col-topic{ width: 150px; }
+
+  tbody tr{ border-bottom: 1px solid var(--line); transition: background .12s ease; }
+  tbody tr:hover{ background: rgba(201,138,59,0.05); }
+  tbody tr.learned{ opacity: 0.42; }
+  tbody tr.hidden{ display: none; }
+
+  tbody td{ padding: 15px 10px; vertical-align: top; font-size: 14.5px; }
+
+  td.no{ font-family: 'Fraunces', serif; color: var(--paper-dim); font-size: 14px; padding-top: 16px; }
+
+  td.word{ white-space: nowrap; padding-right: 18px; }
+  td.word .headword{ font-family: 'Fraunces', serif; font-size: 19px; color: var(--accent-soft); display: block; }
+  td.word .ipa{ font-size: 12px; color: var(--paper-dim); display: block; margin-top: 2px; }
+
+  td.topic{ padding-top: 17px; }
+
+  .pill{
+    display: inline-block;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    color: var(--ink);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  td.meaning{ color: var(--paper); line-height: 1.5; min-width: 140px; }
+  td.example{ color: var(--paper-dim); font-style: italic; line-height: 1.55; max-width: 320px; }
+
+  .checkbox{
+    appearance: none;
+    width: 18px; height: 18px;
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 3px;
+    position: relative;
+    background: transparent;
+  }
+
+  .checkbox:checked{ background: var(--accent); border-color: var(--accent); }
+  .checkbox:checked::after{
+    content: '';
+    position: absolute; left: 5px; top: 1px;
+    width: 5px; height: 9px;
+    border: solid var(--ink);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .empty-state{ text-align: center; padding: 60px 20px; color: var(--paper-dim); display: none; }
+  .empty-state.show{ display: block; }
+
+  /* Flashcard view */
+  .fc-bar{
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 22px; flex-wrap: wrap; gap: 12px;
+  }
+
+  .fc-counter{ font-family: 'Fraunces', serif; color: var(--paper-dim); font-size: 14px; }
+
+  .fc-toggle{
+    display: flex; align-items: center; gap: 8px;
+    color: var(--paper-dim); font-size: 13px; cursor: pointer;
+    user-select: none;
+  }
+
+  .fc-toggle input{ accent-color: var(--accent); }
+
+  .fc-stage{ display: flex; justify-content: center; margin-bottom: 26px; }
+
+  .flashcard{
+    width: 100%; max-width: 480px;
+    height: 300px;
+    perspective: 1400px;
+    cursor: pointer;
+  }
+
+  .flashcard-inner{
+    position: relative; width: 100%; height: 100%;
+    transition: transform .5s cubic-bezier(.2,.8,.2,1);
+    transform-style: preserve-3d;
+  }
+
+  .flashcard.flipped .flashcard-inner{ transform: rotateY(180deg); }
+
+  .fc-face{
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    background: var(--ink-soft);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 32px;
+  }
+
+  .fc-front .headword{ font-family: 'Fraunces', serif; font-size: 36px; color: var(--accent-soft); }
+  .fc-front .ipa{ font-size: 15px; color: var(--paper-dim); margin-top: 10px; }
+  .fc-front .hint{ font-size: 12px; color: var(--paper-dim); margin-top: 28px; opacity: .7; }
+
+  .fc-back{ transform: rotateY(180deg); }
+  .fc-back .meaning{ font-family: 'Fraunces', serif; font-size: 22px; color: var(--paper); margin-bottom: 14px; }
+  .fc-back .example{ font-size: 14.5px; font-style: italic; color: var(--paper-dim); line-height: 1.5; }
+
+  .fc-topic-tag{ position: absolute; top: 16px; left: 16px; }
+
+  .fc-nav{ display: flex; justify-content: center; align-items: center; gap: 16px; }
+
+  .nav-btn{
+    background: none; border: 1px solid var(--line-strong); color: var(--paper);
+    width: 42px; height: 42px; border-radius: 50%; cursor: pointer;
+    font-size: 16px; display: flex; align-items: center; justify-content: center;
+    transition: all .15s ease;
+  }
+
+  .nav-btn:hover{ border-color: var(--accent); color: var(--accent-soft); }
+  .nav-btn:disabled{ opacity: .3; cursor: default; }
+
+  .mark-btn{
+    background: none; border: 1px solid var(--line-strong); color: var(--paper-dim);
+    padding: 10px 18px; border-radius: 20px; font-size: 13px; cursor: pointer;
+    transition: all .15s ease;
+  }
+
+  .mark-btn:hover{ border-color: var(--paper-dim); color: var(--paper); }
+  .mark-btn.is-learned{ background: var(--accent); border-color: var(--accent); color: var(--ink); }
+
+  /* Quiz view */
+  .quiz-panel{ max-width: 560px; margin: 0 auto; }
+
+  .quiz-progress{ font-size: 13px; color: var(--paper-dim); margin-bottom: 8px; text-align: center; }
+
+  .quiz-score{ font-family: 'Fraunces', serif; font-size: 15px; color: var(--accent-soft); text-align: center; margin-bottom: 28px; }
+
+  .quiz-question{
+    font-family: 'Fraunces', serif; font-size: 30px; color: var(--paper);
+    text-align: center; margin-bottom: 8px;
+  }
+
+  .quiz-ipa{ text-align: center; color: var(--paper-dim); font-size: 14px; margin-bottom: 30px; }
+
+  .quiz-options{ display: flex; flex-direction: column; gap: 10px; }
+
+  .quiz-option{
+    background: var(--ink-soft); border: 1px solid var(--line-strong); color: var(--paper);
+    padding: 14px 18px; border-radius: 4px; text-align: left; cursor: pointer;
+    font-family: 'Work Sans', sans-serif; font-size: 14.5px;
+    transition: all .12s ease;
+  }
+
+  .quiz-option:hover:not(:disabled){ border-color: var(--accent); }
+  .quiz-option.correct{ background: rgba(110,148,105,0.22); border-color: var(--t-env); color: var(--paper); }
+  .quiz-option.wrong{ background: rgba(161,92,76,0.22); border-color: var(--t-debate); color: var(--paper); }
+  .quiz-option:disabled{ cursor: default; }
+
+  .quiz-next{
+    margin-top: 22px; width: 100%;
+    background: var(--accent); border: none; color: var(--ink);
+    padding: 13px; border-radius: 4px; font-size: 14.5px; font-weight: 500;
+    cursor: pointer; display: none;
+  }
+
+  .quiz-next.show{ display: block; }
+
+  .quiz-result{ text-align: center; padding: 40px 0; display: none; }
+  .quiz-result.show{ display: block; }
+  .quiz-result .big-score{ font-family: 'Fraunces', serif; font-size: 52px; color: var(--accent-soft); }
+  .quiz-result .msg{ color: var(--paper-dim); margin: 10px 0 28px; }
+  .quiz-restart{
+    background: none; border: 1px solid var(--accent); color: var(--accent-soft);
+    padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 14px;
+  }
+
+  footer{ margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--paper-dim); font-size: 13px; }
+
+  @media (max-width: 640px){
+    td.example, thead th.col-example, td.topic, thead th.col-topic{ display: none; }
+    .flashcard{ height: 260px; }
+    .fc-front .headword{ font-size: 28px; }
+    .quiz-question{ font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="tag">Bộ sưu tập cá nhân · 60 mục</p>
+    <h1>Nhật ký <em>từ vựng</em></h1>
+    <p class="lede">Một danh mục các từ tiếng Anh học thuật, được sắp xếp như hiện vật trong kho lưu trữ — mỗi từ đi kèm phiên âm, nghĩa, chủ đề và một câu ví dụ để ghi nhớ theo ngữ cảnh.</p>
+    <div class="stats">
+      <div class="stat"><span class="num">60</span><span class="label">Tổng số từ</span></div>
+      <div class="stat"><span class="num" id="learnedCount">0</span><span class="label">Đã học</span></div>
+      <div class="stat"><span class="num" id="remainingCount">60</span><span class="label">Còn lại</span></div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="list">Danh sách</button>
+    <button class="tab-btn" data-tab="flashcard">Flashcard</button>
+    <button class="tab-btn" data-tab="quiz">Trắc nghiệm</button>
+  </div>
+
+  <div class="topic-row" id="topicRow"></div>
+
+  <!-- LIST VIEW -->
+  <section class="view active" id="view-list">
+    <div class="controls">
+      <div class="search"><input type="text" id="searchInput" placeholder="Tìm theo từ hoặc nghĩa..."></div>
+      <button class="filter-btn active" data-filter="all">Tất cả</button>
+      <button class="filter-btn" data-filter="unlearned">Chưa học</button>
+      <button class="filter-btn" data-filter="learned">Đã học</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th class="col-no">#</th>
+          <th class="col-check"></th>
+          <th>Từ vựng</th>
+          <th class="col-topic">Chủ đề</th>
+          <th>Nghĩa</th>
+          <th class="col-example">Ví dụ</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <div class="empty-state" id="emptyState">Không tìm thấy từ nào phù hợp.</div>
+  </section>
+
+  <!-- FLASHCARD VIEW -->
+  <section class="view" id="view-flashcard">
+    <div class="fc-bar">
+      <span class="fc-counter" id="fcCounter">1 / 60</span>
+      <label class="fc-toggle"><input type="checkbox" id="fcUnlearnedOnly"> Chỉ hiện từ chưa học</label>
+      <button class="filter-btn" id="fcShuffle">Xáo trộn</button>
+    </div>
+    <div class="fc-stage">
+      <div class="flashcard" id="flashcard">
+        <div class="flashcard-inner">
+          <div class="fc-face fc-front">
+            <span class="pill fc-topic-tag" id="fcTopicTag"></span>
+            <span class="headword" id="fcWord"></span>
+            <span class="ipa" id="fcIpa"></span>
+            <span class="hint">Nhấp để xem nghĩa</span>
+          </div>
+          <div class="fc-face fc-back">
+            <div class="meaning" id="fcMeaning"></div>
+            <div class="example" id="fcExample"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="nav-btn" id="fcPrev">&larr;</button>
+      <button class="mark-btn" id="fcMark">Đánh dấu đã học</button>
+      <button class="nav-btn" id="fcNext">&rarr;</button>
+    </div>
+  </section>
+
+  <!-- QUIZ VIEW -->
+  <section class="view" id="view-quiz">
+    <div class="quiz-panel">
+      <div id="quizActive">
+        <div class="quiz-progress" id="quizProgress">Câu 1 / 10</div>
+        <div class="quiz-score" id="quizScoreLive">Điểm: 0</div>
+        <div class="quiz-question" id="quizWord"></div>
+        <div class="quiz-ipa" id="quizIpa"></div>
+        <div class="quiz-options" id="quizOptions"></div>
+        <button class="quiz-next" id="quizNextBtn">Câu tiếp theo</button>
+      </div>
+      <div class="quiz-result" id="quizResult">
+        <div class="big-score" id="quizFinalScore">0 / 10</div>
+        <div class="msg" id="quizFinalMsg"></div>
+        <button class="quiz-restart" id="quizRestart">Làm bài mới</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>Nhấp vào ô vuông (danh sách) hoặc nút "Đánh dấu đã học" (flashcard) để lưu tiến độ. Trạng thái chỉ được lưu trong phiên xem hiện tại.</footer>
+
+</div>
+
+<script>
+const TOPICS = {
+  environment: { label: "Môi trường & Tác động", color: "var(--t-env)" },
+  heritage:    { label: "Di sản & Văn hoá",       color: "var(--t-heritage)" },
+  business:    { label: "Kinh doanh & Đổi mới",   color: "var(--t-business)" },
+  debate:      { label: "Tranh luận & Quan điểm", color: "var(--t-debate)" },
+  life:        { label: "Đời sống thường nhật",   color: "var(--t-life)" },
+};
+
+const data = [
+  {w:"voracious", ipa:"/vəˈreɪʃəs/", topic:"business", m:"tham lam, ham mê tột độ (ăn/đọc/học)", e:"She has a voracious appetite for knowledge, reading three books a week."},
+  {w:"enhance", ipa:"/ɪnˈhæns/", topic:"business", m:"nâng cao, cải thiện", e:"Regular exercise can enhance both your mood and your memory."},
+  {w:"appetite", ipa:"/ˈæpɪtaɪt/", topic:"business", m:"sự thèm ăn; ham muốn, khát khao", e:"Traveling abroad gave him a real appetite for adventure."},
+  {w:"consumption", ipa:"/kənˈsʌmpʃən/", topic:"environment", m:"sự tiêu thụ", e:"The government is trying to reduce fossil fuel consumption."},
+  {w:"exposure", ipa:"/ɪkˈspoʊʒər/", topic:"environment", m:"sự phơi bày, sự tiếp xúc", e:"Long exposure to sunlight can damage the skin."},
+  {w:"indiscriminate", ipa:"/ˌɪndɪˈskrɪmɪnət/", topic:"environment", m:"bừa bãi, không phân biệt", e:"The bombing caused indiscriminate destruction across the city."},
+  {w:"condemn", ipa:"/kənˈdɛm/", topic:"environment", m:"lên án, chỉ trích gay gắt", e:"Human rights groups condemned the violent crackdown."},
+  {w:"degradation", ipa:"/ˌdɛɡrəˈdeɪʃən/", topic:"environment", m:"sự suy thoái, xuống cấp", e:"Deforestation has led to serious environmental degradation."},
+  {w:"disposal", ipa:"/dɪˈspoʊzəl/", topic:"environment", m:"sự vứt bỏ, xử lý (rác thải)", e:"The factory was fined for illegal waste disposal."},
+  {w:"contaminate", ipa:"/kənˈtæmɪneɪt/", topic:"environment", m:"làm ô nhiễm, làm bẩn", e:"Chemical spills can contaminate rivers and groundwater."},
+  {w:"eminent", ipa:"/ˈɛmɪnənt/", topic:"debate", m:"lỗi lạc, xuất chúng", e:"She consulted an eminent professor of economics."},
+  {w:"imminent", ipa:"/ˈɪmɪnənt/", topic:"debate", m:"sắp xảy ra, cận kề", e:"Forecasters warned that a storm was imminent."},
+  {w:"prominent", ipa:"/ˈprɒmɪnənt/", topic:"debate", m:"nổi bật, có tiếng", e:"He played a prominent role in the peace negotiations."},
+  {w:"collapse", ipa:"/kəˈlæps/", topic:"life", m:"sụp đổ, suy sụp", e:"The old bridge collapsed after years of neglect."},
+  {w:"decisive", ipa:"/dɪˈsaɪsɪv/", topic:"business", m:"quyết đoán; mang tính quyết định", e:"The coach made a decisive substitution in the final minutes."},
+  {w:"steeped (in)", ipa:"/stiːpt/", topic:"heritage", m:"đắm chìm, thấm đẫm trong", e:"The town is steeped in centuries of tradition."},
+  {w:"immersed (in)", ipa:"/ɪˈmɜːrst/", topic:"heritage", m:"chìm đắm, đắm mình trong", e:"She was completely immersed in her new novel."},
+  {w:"reflect", ipa:"/rɪˈflɛkt/", topic:"heritage", m:"phản ánh; suy ngẫm", e:"His paintings reflect his fascination with the sea."},
+  {w:"preserve", ipa:"/prɪˈzɜːrv/", topic:"heritage", m:"bảo tồn, gìn giữ", e:"The organization works to preserve endangered languages."},
+  {w:"landmark", ipa:"/ˈlændmɑːrk/", topic:"heritage", m:"mốc son, công trình mang tính bước ngoặt", e:"The court's ruling was a landmark decision for civil rights."},
+  {w:"replete (with)", ipa:"/rɪˈpliːt/", topic:"heritage", m:"đầy ắp, chứa đầy", e:"The museum's archive is replete with rare manuscripts."},
+  {w:"curate", ipa:"/ˈkjʊəreɪt/", topic:"heritage", m:"tuyển chọn, phụ trách (triển lãm, nội dung)", e:"She was asked to curate an exhibition of ancient pottery."},
+  {w:"artifact", ipa:"/ˈɑːrtɪfækt/", topic:"heritage", m:"hiện vật, cổ vật", e:"Archaeologists uncovered a bronze artifact from the tomb."},
+  {w:"intricate", ipa:"/ˈɪntrɪkət/", topic:"heritage", m:"phức tạp, tinh vi", e:"The necklace features an intricate pattern of silver threads."},
+  {w:"narrative", ipa:"/ˈnærətɪv/", topic:"heritage", m:"câu chuyện, mạch tường thuật", e:"The film follows a nonlinear narrative structure."},
+  {w:"abound (in/with)", ipa:"/əˈbaʊnd/", topic:"heritage", m:"có rất nhiều, phong phú", e:"The coastal waters abound with colorful fish."},
+  {w:"flourish", ipa:"/ˈflɜːrɪʃ/", topic:"business", m:"phát triển mạnh, hưng thịnh", e:"Small businesses flourished after the new policy was introduced."},
+  {w:"entrepreneur", ipa:"/ˌɑːntrəprəˈnɜːr/", topic:"business", m:"doanh nhân khởi nghiệp", e:"The young entrepreneur launched her startup at twenty-two."},
+  {w:"innovator", ipa:"/ˈɪnəveɪtər/", topic:"business", m:"người đổi mới, nhà cải tiến", e:"He is regarded as one of the leading innovators in renewable energy."},
+  {w:"intense", ipa:"/ɪnˈtɛns/", topic:"life", m:"mãnh liệt, dữ dội", e:"The competition between the two teams was intense."},
+  {w:"prognosticate", ipa:"/prəɡˈnɒstɪkeɪt/", topic:"debate", m:"tiên đoán, dự báo trước", e:"Economists tried to prognosticate how the market would react."},
+  {w:"contend", ipa:"/kənˈtɛnd/", topic:"debate", m:"khẳng định, tranh luận; đấu tranh", e:"Critics contend that the policy will harm small farmers."},
+  {w:"inevitable", ipa:"/ɪnˈɛvɪtəbəl/", topic:"debate", m:"không thể tránh khỏi, tất yếu", e:"Some conflict was inevitable given their opposing views."},
+  {w:"disruptive", ipa:"/dɪsˈrʌptɪv/", topic:"business", m:"gây gián đoạn, phá vỡ trật tự cũ", e:"The startup introduced a disruptive technology that reshaped the industry."},
+  {w:"divided", ipa:"/dɪˈvaɪdɪd/", topic:"debate", m:"bị chia rẽ", e:"Public opinion remains divided on the new law."},
+  {w:"paradox", ipa:"/ˈpærədɒks/", topic:"debate", m:"nghịch lý", e:"It's a paradox that the more choices we have, the less satisfied we feel."},
+  {w:"dilemma", ipa:"/dɪˈlɛmə/", topic:"debate", m:"tình huống khó xử, thế lưỡng nan", e:"She faced a difficult dilemma between career and family."},
+  {w:"irony", ipa:"/ˈaɪrəni/", topic:"debate", m:"sự mỉa mai, trớ trêu", e:"It was a bitter irony that the rescuer himself needed rescuing."},
+  {w:"blur", ipa:"/blɜːr/", topic:"life", m:"làm mờ, nhòe đi", e:"The fast-moving train became a blur through the window."},
+  {w:"enduring", ipa:"/ɪnˈdʊrɪŋ/", topic:"business", m:"lâu bền, bền vững theo thời gian", e:"Their friendship has proven remarkably enduring over the decades."},
+  {w:"realm", ipa:"/rɛlm/", topic:"heritage", m:"lĩnh vực, phạm vi; vương quốc", e:"The discovery opened up a whole new realm of possibilities."},
+  {w:"speculative", ipa:"/ˈspɛkjʊlətɪv/", topic:"business", m:"mang tính suy đoán, đầu cơ", e:"Investors were warned that the project was highly speculative."},
+  {w:"embed", ipa:"/ɪmˈbɛd/", topic:"life", m:"gắn chặt, cắm sâu, nhúng vào", e:"The company embedded a tracking chip in every product."},
+  {w:"oppose", ipa:"/əˈpoʊz/", topic:"debate", m:"phản đối", e:"Local residents strongly opposed the construction of the highway."},
+  {w:"associate", ipa:"/əˈsoʊʃieɪt/", topic:"debate", m:"liên kết, gắn liền với; đồng nghiệp", e:"People often associate the color red with danger."},
+  {w:"annals", ipa:"/ˈænəlz/", topic:"heritage", m:"biên niên sử, sử sách", e:"His achievements are recorded in the annals of medical history."},
+  {w:"controversial", ipa:"/ˌkɒntrəˈvɜːrʃəl/", topic:"debate", m:"gây tranh cãi", e:"The politician's remarks sparked a controversial debate."},
+  {w:"dispute", ipa:"/dɪˈspjuːt/", topic:"debate", m:"tranh chấp, tranh cãi", e:"The two countries are locked in a border dispute."},
+  {w:"intellectual", ipa:"/ˌɪntəˈlɛktʃuəl/", topic:"heritage", m:"trí thức; thuộc về trí tuệ", e:"The café was a gathering place for artists and intellectuals."},
+  {w:"chronicle", ipa:"/ˈkrɒnɪkəl/", topic:"heritage", m:"ghi chép biên niên; biên niên sử", e:"The documentary chronicles the rise and fall of the empire."},
+  {w:"compound", ipa:"/kəmˈpaʊnd/", topic:"environment", m:"hợp chất; làm trầm trọng thêm", e:"Missing the deadline only compounded her stress."},
+  {w:"foster", ipa:"/ˈfɒstər/", topic:"business", m:"nuôi dưỡng, thúc đẩy (sự phát triển)", e:"The program aims to foster creativity among young students."},
+  {w:"frustrated", ipa:"/frʌˈstreɪtɪd/", topic:"life", m:"thất vọng, bực bội", e:"He grew frustrated after hours of fruitless searching."},
+  {w:"malfunction", ipa:"/ˌmælˈfʌŋkʃən/", topic:"environment", m:"trục trặc, hỏng hóc", e:"The spacecraft's systems began to malfunction mid-flight."},
+  {w:"anticipate", ipa:"/ænˈtɪsɪpeɪt/", topic:"business", m:"mong đợi, dự đoán trước", e:"We anticipate strong demand for the product this holiday season."},
+  {w:"drudgery", ipa:"/ˈdrʌdʒəri/", topic:"life", m:"công việc nhàm chán, cực nhọc", e:"Farm life in those days was full of endless drudgery."},
+  {w:"pure", ipa:"/pjʊər/", topic:"life", m:"tinh khiết, thuần khiết", e:"The spring water here is remarkably pure."},
+  {w:"variation", ipa:"/ˌvɛəriˈeɪʃən/", topic:"life", m:"sự biến đổi, biến thể", e:"There is significant variation in prices between the two stores."},
+  {w:"skeptical", ipa:"/ˈskɛptɪkəl/", topic:"debate", m:"hoài nghi", e:"She remained skeptical of claims that the diet worked."},
+  {w:"displace", ipa:"/dɪsˈpleɪs/", topic:"environment", m:"thay thế; làm dịch chuyển, di dời", e:"Rising sea levels have already displaced thousands of coastal residents."}
+];
+
+data.forEach((d, i) => d.id = i);
+
+/* ---------- shared state ---------- */
+let activeTab = 'list';
+let topicFilter = 'all';
+let statusFilter = 'all';
+
+const learnedCountEl = document.getElementById('learnedCount');
+const remainingCountEl = document.getElementById('remainingCount');
+
+function updateStats(){
+  const learned = data.filter(d => d.learned).length;
+  learnedCountEl.textContent = learned;
+  remainingCountEl.textContent = data.length - learned;
+}
+
+function currentPool(){
+  return topicFilter === 'all' ? data : data.filter(d => d.topic === topicFilter);
+}
+
+function shuffleArr(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ---------- topic pills (shared) ---------- */
+const topicRow = document.getElementById('topicRow');
+function renderTopicPills(){
+  topicRow.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.className = 'topic-pill' + (topicFilter === 'all' ? ' active' : '');
+  allBtn.textContent = 'Tất cả chủ đề';
+  allBtn.addEventListener('click', () => { topicFilter = 'all'; onTopicChange(); });
+  topicRow.appendChild(allBtn);
+
+  Object.entries(TOPICS).forEach(([key, t]) => {
+    const btn = document.createElement('button');
+    btn.className = 'topic-pill' + (topicFilter === key ? ' active' : '');
+    btn.innerHTML = `<span class="dot" style="background:${t.color}"></span>${t.label}`;
+    btn.addEventListener('click', () => { topicFilter = key; onTopicChange(); });
+    topicRow.appendChild(btn);
+  });
+}
+
+function onTopicChange(){
+  renderTopicPills();
+  applyListFilters();
+  if(activeTab === 'flashcard') resetFlashcards();
+  if(activeTab === 'quiz') startQuiz();
+}
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    btn.classList.add('active');
+    activeTab = btn.dataset.tab;
+    document.getElementById('view-' + activeTab).classList.add('active');
+    if(activeTab === 'flashcard') resetFlashcards();
+    if(activeTab === 'quiz') startQuiz();
+  });
+});
+
+/* ================= LIST VIEW ================= */
+const tableBody = document.getElementById('tableBody');
+const searchInput = document.getElementById('searchInput');
+const emptyState = document.getElementById('emptyState');
+const listFilterBtns = document.querySelectorAll('#view-list .filter-btn');
+
+function renderList(){
+  tableBody.innerHTML = '';
+  data.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.dataset.id = item.id;
+    if(item.learned) tr.classList.add('learned');
+    const t = TOPICS[item.topic];
+    tr.innerHTML = `
+      <td class="no">${String(item.id + 1).padStart(2, '0')}</td>
+      <td><input type="checkbox" class="checkbox" ${item.learned ? 'checked' : ''}></td>
+      <td class="word"><span class="headword">${item.w}</span><span class="ipa">${item.ipa}</span></td>
+      <td class="topic"><span class="pill" style="background:${t.color}">${t.label}</span></td>
+      <td class="meaning">${item.m}</td>
+      <td class="example">${item.e}</td>
+    `;
+    tableBody.appendChild(tr);
+  });
+  applyListFilters();
+}
+
+function applyListFilters(){
+  const query = searchInput.value.trim().toLowerCase();
+  let visibleCount = 0;
+  document.querySelectorAll('#tableBody tr').forEach(tr => {
+    const item = data[tr.dataset.id];
+    const matchesTopic = topicFilter === 'all' || item.topic === topicFilter;
+    const matchesQuery = !query || item.w.toLowerCase().includes(query) || item.m.toLowerCase().includes(query);
+    const matchesStatus = statusFilter === 'all' ? true : statusFilter === 'learned' ? item.learned : !item.learned;
+    const visible = matchesTopic && matchesQuery && matchesStatus;
+    tr.classList.toggle('hidden', !visible);
+    if(visible) visibleCount++;
+  });
+  emptyState.classList.toggle('show', visibleCount === 0);
+}
+
+tableBody.addEventListener('change', e => {
+  if(e.target.classList.contains('checkbox')){
+    const tr = e.target.closest('tr');
+    const item = data[tr.dataset.id];
+    item.learned = e.target.checked;
+    tr.classList.toggle('learned', item.learned);
+    updateStats();
+    applyListFilters();
+    if(activeTab === 'flashcard') syncFlashcardMark();
+  }
+});
+
+searchInput.addEventListener('input', applyListFilters);
+listFilterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    listFilterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    statusFilter = btn.dataset.filter;
+    applyListFilters();
+  });
+});
+
+/* ================= FLASHCARD VIEW ================= */
+let fcOrder = [];
+let fcIndex = 0;
+
+const flashcardEl = document.getElementById('flashcard');
+const fcCounter = document.getElementById('fcCounter');
+const fcWord = document.getElementById('fcWord');
+const fcIpa = document.getElementById('fcIpa');
+const fcTopicTag = document.getElementById('fcTopicTag');
+const fcMeaning = document.getElementById('fcMeaning');
+const fcExample = document.getElementById('fcExample');
+const fcPrev = document.getElementById('fcPrev');
+const fcNext = document.getElementById('fcNext');
+const fcMark = document.getElementById('fcMark');
+const fcShuffleBtn = document.getElementById('fcShuffle');
+const fcUnlearnedOnly = document.getElementById('fcUnlearnedOnly');
+
+function resetFlashcards(){
+  let pool = currentPool();
+  if(fcUnlearnedOnly.checked) pool = pool.filter(d => !d.learned);
+  fcOrder = pool.map(d => d.id);
+  fcIndex = 0;
+  if(fcOrder.length === 0){
+    fcWord.textContent = 'Hết từ rồi!';
+    fcIpa.textContent = '';
+    fcTopicTag.textContent = '';
+    fcMeaning.textContent = 'Không còn từ nào trong bộ lọc này.';
+    fcExample.textContent = '';
+    fcCounter.textContent = '0 / 0';
+    fcPrev.disabled = true; fcNext.disabled = true; fcMark.style.display = 'none';
+    return;
+  }
+  fcMark.style.display = 'inline-block';
+  renderFlashcard();
+}
+
+function renderFlashcard(){
+  flashcardEl.classList.remove('flipped');
+  const item = data[fcOrder[fcIndex]];
+  const t = TOPICS[item.topic];
+  fcWord.textContent = item.w;
+  fcIpa.textContent = item.ipa;
+  fcTopicTag.textContent = t.label;
+  fcTopicTag.style.background = t.color;
+  fcMeaning.textContent = item.m;
+  fcExample.textContent = item.e;
+  fcCounter.textContent = `${fcIndex + 1} / ${fcOrder.length}`;
+  fcPrev.disabled = fcIndex === 0;
+  fcNext.disabled = fcIndex === fcOrder.length - 1;
+  syncFlashcardMark();
+}
+
+function syncFlashcardMark(){
+  if(!fcOrder.length) return;
+  const item = data[fcOrder[fcIndex]];
+  fcMark.textContent = item.learned ? 'Đã học ✓' : 'Đánh dấu đã học';
+  fcMark.classList.toggle('is-learned', !!item.learned);
+}
+
+flashcardEl.addEventListener('click', () => flashcardEl.classList.toggle('flipped'));
+fcPrev.addEventListener('click', () => { if(fcIndex > 0){ fcIndex--; renderFlashcard(); } });
+fcNext.addEventListener('click', () => { if(fcIndex < fcOrder.length - 1){ fcIndex++; renderFlashcard(); } });
+fcMark.addEventListener('click', () => {
+  const item = data[fcOrder[fcIndex]];
+  item.learned = !item.learned;
+  syncFlashcardMark();
+  updateStats();
+  renderList();
+});
+fcShuffleBtn.addEventListener('click', () => {
+  fcOrder = shuffleArr(fcOrder);
+  fcIndex = 0;
+  renderFlashcard();
+});
+fcUnlearnedOnly.addEventListener('change', resetFlashcards);
+
+/* ================= QUIZ VIEW ================= */
+const QUIZ_LEN = 10;
+let quizQuestions = [];
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+const quizActive = document.getElementById('quizActive');
+const quizResult = document.getElementById('quizResult');
+const quizProgress = document.getElementById('quizProgress');
+const quizScoreLive = document.getElementById('quizScoreLive');
+const quizWord = document.getElementById('quizWord');
+const quizIpa = document.getElementById('quizIpa');
+const quizOptions = document.getElementById('quizOptions');
+const quizNextBtn = document.getElementById('quizNextBtn');
+const quizFinalScore = document.getElementById('quizFinalScore');
+const quizFinalMsg = document.getElementById('quizFinalMsg');
+const quizRestart = document.getElementById('quizRestart');
+
+function startQuiz(){
+  const pool = currentPool();
+  const n = Math.min(QUIZ_LEN, pool.length);
+  quizQuestions = shuffleArr(pool).slice(0, n);
+  quizIndex = 0;
+  quizScore = 0;
+  quizResult.classList.remove('show');
+  quizActive.style.display = 'block';
+  if(n === 0){
+    quizWord.textContent = 'Không có từ nào';
+    quizIpa.textContent = '';
+    quizOptions.innerHTML = '';
+    quizProgress.textContent = '';
+    return;
+  }
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  quizAnswered = false;
+  quizNextBtn.classList.remove('show');
+  const item = quizQuestions[quizIndex];
+  quizProgress.textContent = `Câu ${quizIndex + 1} / ${quizQuestions.length}`;
+  quizScoreLive.textContent = `Điểm: ${quizScore}`;
+  quizWord.textContent = item.w;
+  quizIpa.textContent = item.ipa;
+
+  const distractorPool = data.filter(d => d.id !== item.id && d.m !== item.m);
+  const distractors = shuffleArr(distractorPool).slice(0, 3).map(d => d.m);
+  const choices = shuffleArr([item.m, ...distractors]);
+
+  quizOptions.innerHTML = '';
+  choices.forEach(choice => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.textContent = choice;
+    btn.addEventListener('click', () => handleQuizAnswer(btn, choice, item.m));
+    quizOptions.appendChild(btn);
+  });
+}
+
+function handleQuizAnswer(btn, choice, correctMeaning){
+  if(quizAnswered) return;
+  quizAnswered = true;
+  const isCorrect = choice === correctMeaning;
+  if(isCorrect) quizScore++;
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.disabled = true;
+    if(opt.textContent === correctMeaning) opt.classList.add('correct');
+    else if(opt === btn) opt.classList.add('wrong');
+  });
+  quizScoreLive.textContent = `Điểm: ${quizScore}`;
+  quizNextBtn.classList.add('show');
+  quizNextBtn.textContent = quizIndex === quizQuestions.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo';
+}
+
+quizNextBtn.addEventListener('click', () => {
+  if(quizIndex < quizQuestions.length - 1){
+    quizIndex++;
+    renderQuizQuestion();
+  } else {
+    finishQuiz();
+  }
+});
+
+function finishQuiz(){
+  quizActive.style.display = 'none';
+  quizResult.classList.add('show');
+  quizFinalScore.textContent = `${quizScore} / ${quizQuestions.length}`;
+  const ratio = quizScore / quizQuestions.length;
+  quizFinalMsg.textContent = ratio === 1 ? 'Xuất sắc, bạn nắm chắc toàn bộ!' :
+    ratio >= 0.7 ? 'Khá tốt, ôn thêm vài từ nữa nhé.' :
+    'Nên ôn lại phần Flashcard trước khi làm lại.';
+}
+
+quizRestart.addEventListener('click', startQuiz);
+
+/* ---------- init ---------- */
+renderTopicPills();
+renderList();
+updateStats();
+</script>
+</body>
+</html>
