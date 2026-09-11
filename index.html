@@ -151,14 +151,14 @@
     flex-wrap: wrap;
   }
 
-  .search{ flex: 1; min-width: 220px; }
+  .search{ flex: 1; min-width: 220px; position: relative; }
 
   .search input{
     width: 100%;
     background: var(--ink-soft);
     border: 1px solid var(--line-strong);
     color: var(--paper);
-    padding: 12px 16px;
+    padding: 12px 40px 12px 16px;
     border-radius: 3px;
     font-family: 'Work Sans', sans-serif;
     font-size: 14.5px;
@@ -168,6 +168,29 @@
 
   .search input::placeholder{ color: var(--paper-dim); }
   .search input:focus{ border-color: var(--accent); }
+
+  .search-clear{
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: none;
+    color: var(--paper-dim);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 15px;
+    line-height: 1;
+    transition: all .15s ease;
+  }
+
+  .search-clear:hover{ color: var(--paper); background: var(--ink-softer); }
+  .search-clear.show{ display: flex; }
 
   .filter-btn{
     background: none;
@@ -421,7 +444,10 @@
   <!-- LIST VIEW -->
   <section class="view active" id="view-list">
     <div class="controls">
-      <div class="search"><input type="text" id="searchInput" placeholder="Tìm theo từ hoặc nghĩa..."></div>
+      <div class="search">
+        <input type="text" id="searchInput" placeholder="Tìm theo từ hoặc nghĩa...">
+        <button class="search-clear" id="searchClear" title="Xóa tìm kiếm" aria-label="Xóa tìm kiếm">&times;</button>
+      </div>
       <button class="filter-btn active" data-filter="all">Tất cả</button>
       <button class="filter-btn" data-filter="unlearned">Chưa học</button>
       <button class="filter-btn" data-filter="learned">Đã học</button>
@@ -647,6 +673,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 /* ================= LIST VIEW ================= */
 const tableBody = document.getElementById('tableBody');
 const searchInput = document.getElementById('searchInput');
+const searchClear = document.getElementById('searchClear');
 const emptyState = document.getElementById('emptyState');
 const listFilterBtns = document.querySelectorAll('#view-list .filter-btn');
 
@@ -697,7 +724,17 @@ tableBody.addEventListener('change', e => {
   }
 });
 
-searchInput.addEventListener('input', applyListFilters);
+searchInput.addEventListener('input', () => {
+  searchClear.classList.toggle('show', searchInput.value.length > 0);
+  applyListFilters();
+});
+
+searchClear.addEventListener('click', () => {
+  searchInput.value = '';
+  searchClear.classList.remove('show');
+  applyListFilters();
+  searchInput.focus();
+});
 listFilterBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     listFilterBtns.forEach(b => b.classList.remove('active'));
