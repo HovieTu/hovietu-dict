@@ -249,6 +249,27 @@
     margin-top: 4px;
   }
 
+  .speak-btn{
+    background: none;
+    border: 1px solid var(--line-strong);
+    color: var(--paper-dim);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    padding: 0;
+    vertical-align: middle;
+    transition: all .15s ease;
+  }
+
+  .speak-btn:hover{ border-color: var(--accent); color: var(--accent-soft); }
+  td.word .speak-btn{ margin-left: 6px; }
+  .fc-front .speak-btn{ margin-top: 10px; width: 30px; height: 30px; font-size: 13px; }
+
   td.topic{ padding-top: 17px; }
 
   .pill{
@@ -344,6 +365,17 @@
 
   .fc-nav{ display: flex; justify-content: center; align-items: center; gap: 16px; }
 
+  .fc-kbd-hint{ text-align: center; font-size: 12px; color: var(--paper-dim); margin-top: 16px; opacity: .75; }
+  .fc-kbd-hint kbd{
+    display: inline-block;
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 11px;
+    margin: 0 2px;
+  }
+
   .nav-btn{
     background: none; border: 1px solid var(--line-strong); color: var(--paper);
     width: 42px; height: 42px; border-radius: 50%; cursor: pointer;
@@ -366,6 +398,10 @@
   /* Quiz view */
   .quiz-panel{ max-width: 560px; margin: 0 auto; }
 
+  .quiz-direction-row{ display: flex; justify-content: center; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+
+  .quiz-instruction{ text-align: center; font-size: 12.5px; color: var(--paper-dim); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .04em; }
+
   .quiz-progress{ font-size: 13px; color: var(--paper-dim); margin-bottom: 8px; text-align: center; }
 
   .quiz-score{ font-family: 'Fraunces', serif; font-size: 15px; color: var(--accent-soft); text-align: center; margin-bottom: 28px; }
@@ -374,6 +410,10 @@
     font-family: 'Fraunces', serif; font-size: 30px; color: var(--paper);
     text-align: center; margin-bottom: 8px;
   }
+
+  .quiz-question.small{ font-size: 21px; line-height: 1.35; }
+
+  .quiz-word-audio{ display: flex; justify-content: center; margin-bottom: 4px; }
 
   .quiz-ipa{ text-align: center; color: var(--paper-dim); font-size: 14px; margin-bottom: 30px; }
 
@@ -451,8 +491,38 @@
     cursor: pointer;
   }
 
-  .lookup-result{ margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .lookup-result{ margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-start; }
   .lookup-found{ font-size: 13.5px; color: var(--paper-dim); }
+  .lookup-loading{ font-size: 13.5px; color: var(--paper-dim); font-style: italic; }
+
+  .lookup-card{
+    width: 100%;
+    border: 1px solid var(--line-strong);
+    border-radius: 5px;
+    padding: 16px 18px;
+    background: var(--ink);
+  }
+
+  .lookup-card-head{ display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .lookup-card-word{ font-family: 'Fraunces', serif; font-size: 20px; color: var(--accent-soft); }
+  .lookup-card-head .ipa{ font-size: 13px; color: var(--paper-dim); }
+  .lookup-card-vi{ font-size: 14.5px; color: var(--paper); margin-bottom: 6px; line-height: 1.5; }
+  .lookup-card-vi strong, .lookup-card-def strong{ color: var(--paper-dim); font-weight: 500; }
+  .lookup-card-def{ font-size: 13.5px; color: var(--paper-dim); margin-bottom: 6px; line-height: 1.5; }
+  .lookup-card-example{ font-size: 13px; font-style: italic; color: var(--paper-dim); line-height: 1.5; }
+
+  .lookup-ext-row{ display: flex; gap: 16px; margin-top: 12px; }
+  .lookup-ext-note{ width: 100%; }
+  .lookup-ext-note .lookup-ext-row{ margin-top: 6px; }
+  .lookup-ext-note .lookup-link{
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    font-size: 12px;
+    color: var(--paper-dim);
+    text-decoration: underline;
+  }
+  .lookup-ext-note .lookup-link:hover{ color: var(--accent-soft); background: none; }
 
   .lookup-link{
     display: inline-block;
@@ -466,6 +536,42 @@
   }
 
   .lookup-link:hover{ border-color: var(--accent); background: rgba(201,138,59,0.08); }
+
+  .lookup-loading{ color: var(--paper-dim); font-size: 13.5px; }
+  .lookup-mini-loading{ color: var(--paper-dim); font-size: 12.5px; font-style: italic; opacity: .75; }
+
+  .lookup-error{ font-size: 13.5px; color: var(--paper-dim); line-height: 1.6; }
+
+  .lookup-card{ width: 100%; margin-top: 4px; }
+
+  .lookup-card-head{ display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .lookup-card-word{ font-family: 'Fraunces', serif; font-size: 22px; color: var(--accent-soft); }
+  .lookup-card-ipa{ font-size: 13px; color: var(--paper-dim); }
+
+  .lookup-card-vi{
+    font-size: 14.5px;
+    color: var(--paper);
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .lookup-meaning{ margin-bottom: 12px; }
+  .lookup-meaning .pos-tag{ margin-right: 8px; margin-top: 0; vertical-align: middle; }
+  .lookup-def{ font-size: 13.5px; color: var(--paper); line-height: 1.55; margin-top: 6px; }
+  .lookup-def .ex{ display: block; color: var(--paper-dim); font-style: italic; margin-top: 2px; }
+
+  .lookup-ext-row{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+
+  .lookup-ext-label{ font-size: 12px; color: var(--paper-dim); }
 
   footer{ margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--paper-dim); font-size: 13px; }
 
@@ -494,7 +600,7 @@
   <section class="lookup-box">
     <div class="lookup-head">
       <span class="lookup-title">Tra từ khác</span>
-      <span class="lookup-sub">Không có trong 60 từ trên? Tra nhanh ở đây.</span>
+      <span class="lookup-sub">Không có trong 60 từ trên? Tra nghĩa & phát âm ngay tại đây.</span>
     </div>
     <div class="lookup-form">
       <div class="lookup-input-wrap">
@@ -558,6 +664,7 @@
             <span class="headword" id="fcWord"></span>
             <span class="ipa" id="fcIpa"></span>
             <span class="pos-tag" id="fcPos"></span>
+            <button class="speak-btn" id="fcSpeak" title="Nghe phát âm" aria-label="Nghe phát âm">🔊</button>
             <span class="hint">Nhấp để xem nghĩa</span>
           </div>
           <div class="fc-face fc-back">
@@ -572,14 +679,22 @@
       <button class="mark-btn" id="fcMark">Đánh dấu đã học</button>
       <button class="nav-btn" id="fcNext">&rarr;</button>
     </div>
+    <p class="fc-kbd-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> chuyển thẻ &nbsp;·&nbsp; <kbd>Space</kbd> lật thẻ</p>
   </section>
 
   <!-- QUIZ VIEW -->
   <section class="view" id="view-quiz">
     <div class="quiz-panel">
+      <div class="quiz-direction-row">
+        <button class="filter-btn active" data-dir="w2m">Từ → Nghĩa</button>
+        <button class="filter-btn" data-dir="m2w">Nghĩa → Từ</button>
+        <button class="filter-btn" data-dir="mixed">Ngẫu nhiên</button>
+      </div>
       <div id="quizActive">
         <div class="quiz-progress" id="quizProgress">Câu 1 / 10</div>
         <div class="quiz-score" id="quizScoreLive">Điểm: 0</div>
+        <div class="quiz-instruction" id="quizInstruction">Chọn nghĩa đúng</div>
+        <div class="quiz-word-audio" id="quizWordAudio"></div>
         <div class="quiz-question" id="quizWord"></div>
         <div class="quiz-ipa" id="quizIpa"></div>
         <div class="quiz-options" id="quizOptions"></div>
@@ -704,6 +819,22 @@ function shuffleArr(arr){
   return a;
 }
 
+/* ---------- pronunciation ---------- */
+function speakableText(w){
+  return w.replace(/\s*\([^)]*\)/g, '').trim();
+}
+
+function speak(word){
+  if(!('speechSynthesis' in window)) return;
+  try{
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(speakableText(word));
+    utter.lang = 'en-US';
+    utter.rate = 0.9;
+    window.speechSynthesis.speak(utter);
+  }catch(err){ /* speech synthesis unavailable, fail silently */ }
+}
+
 /* ---------- topic pills (shared) ---------- */
 const topicRow = document.getElementById('topicRow');
 function renderTopicPills(){
@@ -760,7 +891,7 @@ function renderList(){
     tr.innerHTML = `
       <td class="no">${String(item.id + 1).padStart(2, '0')}</td>
       <td><input type="checkbox" class="checkbox" ${item.learned ? 'checked' : ''}></td>
-      <td class="word"><span class="headword">${item.w}</span><span class="ipa">${item.ipa}</span><span class="pos-tag" title="${POS_LABELS[item.pos].full}">${POS_LABELS[item.pos].abbr}</span></td>
+      <td class="word"><span class="headword">${item.w}</span><button class="speak-btn" data-speak="${item.w}" title="Nghe phát âm" aria-label="Nghe phát âm">🔊</button><span class="ipa">${item.ipa}</span><span class="pos-tag" title="${POS_LABELS[item.pos].full}">${POS_LABELS[item.pos].abbr}</span></td>
       <td class="topic"><span class="pill" style="background:${t.color}">${t.label}</span></td>
       <td class="meaning">${item.m}</td>
       <td class="example">${item.e}</td>
@@ -784,6 +915,14 @@ function applyListFilters(){
   });
   emptyState.classList.toggle('show', visibleCount === 0);
 }
+
+tableBody.addEventListener('click', e => {
+  const speakBtn = e.target.closest('.speak-btn');
+  if(speakBtn){
+    e.stopPropagation();
+    speak(speakBtn.dataset.speak);
+  }
+});
 
 tableBody.addEventListener('change', e => {
   if(e.target.classList.contains('checkbox')){
@@ -834,6 +973,7 @@ const fcNext = document.getElementById('fcNext');
 const fcMark = document.getElementById('fcMark');
 const fcShuffleBtn = document.getElementById('fcShuffle');
 const fcUnlearnedOnly = document.getElementById('fcUnlearnedOnly');
+const fcSpeak = document.getElementById('fcSpeak');
 
 function resetFlashcards(){
   let pool = currentPool();
@@ -880,6 +1020,10 @@ function syncFlashcardMark(){
 }
 
 flashcardEl.addEventListener('click', () => flashcardEl.classList.toggle('flipped'));
+fcSpeak.addEventListener('click', e => {
+  e.stopPropagation();
+  if(fcOrder.length) speak(data[fcOrder[fcIndex]].w);
+});
 fcPrev.addEventListener('click', () => { if(fcIndex > 0){ fcIndex--; renderFlashcard(); } });
 fcNext.addEventListener('click', () => { if(fcIndex < fcOrder.length - 1){ fcIndex++; renderFlashcard(); } });
 fcMark.addEventListener('click', () => {
@@ -896,6 +1040,23 @@ fcShuffleBtn.addEventListener('click', () => {
 });
 fcUnlearnedOnly.addEventListener('change', resetFlashcards);
 
+document.addEventListener('keydown', e => {
+  if(activeTab !== 'flashcard') return;
+  const tag = document.activeElement && document.activeElement.tagName;
+  if(tag === 'INPUT' || tag === 'TEXTAREA') return;
+  if(!fcOrder.length) return;
+  if(e.key === 'ArrowLeft'){
+    e.preventDefault();
+    if(fcIndex > 0){ fcIndex--; renderFlashcard(); }
+  } else if(e.key === 'ArrowRight'){
+    e.preventDefault();
+    if(fcIndex < fcOrder.length - 1){ fcIndex++; renderFlashcard(); }
+  } else if(e.key === ' ' || e.code === 'Space'){
+    e.preventDefault();
+    flashcardEl.classList.toggle('flipped');
+  }
+});
+
 /* ================= QUIZ VIEW ================= */
 const QUIZ_LEN = 10;
 let quizQuestions = [];
@@ -907,6 +1068,8 @@ const quizActive = document.getElementById('quizActive');
 const quizResult = document.getElementById('quizResult');
 const quizProgress = document.getElementById('quizProgress');
 const quizScoreLive = document.getElementById('quizScoreLive');
+const quizInstruction = document.getElementById('quizInstruction');
+const quizWordAudio = document.getElementById('quizWordAudio');
 const quizWord = document.getElementById('quizWord');
 const quizIpa = document.getElementById('quizIpa');
 const quizOptions = document.getElementById('quizOptions');
@@ -914,11 +1077,19 @@ const quizNextBtn = document.getElementById('quizNextBtn');
 const quizFinalScore = document.getElementById('quizFinalScore');
 const quizFinalMsg = document.getElementById('quizFinalMsg');
 const quizRestart = document.getElementById('quizRestart');
+const quizDirectionBtns = document.querySelectorAll('.quiz-direction-row .filter-btn');
+
+let quizDirectionSetting = 'w2m';
+
+function pickDirection(){
+  if(quizDirectionSetting === 'mixed') return Math.random() < 0.5 ? 'w2m' : 'm2w';
+  return quizDirectionSetting;
+}
 
 function startQuiz(){
   const pool = currentPool();
   const n = Math.min(QUIZ_LEN, pool.length);
-  quizQuestions = shuffleArr(pool).slice(0, n);
+  quizQuestions = shuffleArr(pool).slice(0, n).map(item => ({ ...item, qDirection: pickDirection() }));
   quizIndex = 0;
   quizScore = 0;
   quizResult.classList.remove('show');
@@ -926,6 +1097,7 @@ function startQuiz(){
   if(n === 0){
     quizWord.textContent = 'Không có từ nào';
     quizIpa.textContent = '';
+    quizWordAudio.innerHTML = '';
     quizOptions.innerHTML = '';
     quizProgress.textContent = '';
     return;
@@ -939,31 +1111,50 @@ function renderQuizQuestion(){
   const item = quizQuestions[quizIndex];
   quizProgress.textContent = `Câu ${quizIndex + 1} / ${quizQuestions.length}`;
   quizScoreLive.textContent = `Điểm: ${quizScore}`;
-  quizWord.textContent = item.w;
-  quizIpa.textContent = item.ipa;
 
-  const distractorPool = data.filter(d => d.id !== item.id && d.m !== item.m);
-  const distractors = shuffleArr(distractorPool).slice(0, 3).map(d => d.m);
-  const choices = shuffleArr([item.m, ...distractors]);
+  const isW2M = item.qDirection === 'w2m';
+  quizInstruction.textContent = isW2M ? 'Chọn nghĩa đúng' : 'Chọn từ đúng';
+  quizWord.classList.toggle('small', !isW2M);
+  quizWordAudio.innerHTML = '';
+
+  if(isW2M){
+    quizWord.textContent = item.w;
+    quizIpa.textContent = item.ipa;
+    const speakBtn = document.createElement('button');
+    speakBtn.className = 'speak-btn';
+    speakBtn.title = 'Nghe phát âm';
+    speakBtn.setAttribute('aria-label', 'Nghe phát âm');
+    speakBtn.textContent = '🔊';
+    speakBtn.addEventListener('click', () => speak(item.w));
+    quizWordAudio.appendChild(speakBtn);
+  } else {
+    quizWord.textContent = item.m;
+    quizIpa.textContent = '';
+  }
+
+  const correctAnswer = isW2M ? item.m : item.w;
+  const distractorPool = data.filter(d => d.id !== item.id && (isW2M ? d.m !== item.m : d.w !== item.w));
+  const distractors = shuffleArr(distractorPool).slice(0, 3).map(d => isW2M ? d.m : d.w);
+  const choices = shuffleArr([correctAnswer, ...distractors]);
 
   quizOptions.innerHTML = '';
   choices.forEach(choice => {
     const btn = document.createElement('button');
     btn.className = 'quiz-option';
     btn.textContent = choice;
-    btn.addEventListener('click', () => handleQuizAnswer(btn, choice, item.m));
+    btn.addEventListener('click', () => handleQuizAnswer(btn, choice, correctAnswer));
     quizOptions.appendChild(btn);
   });
 }
 
-function handleQuizAnswer(btn, choice, correctMeaning){
+function handleQuizAnswer(btn, choice, correctAnswer){
   if(quizAnswered) return;
   quizAnswered = true;
-  const isCorrect = choice === correctMeaning;
+  const isCorrect = choice === correctAnswer;
   if(isCorrect) quizScore++;
   document.querySelectorAll('.quiz-option').forEach(opt => {
     opt.disabled = true;
-    if(opt.textContent === correctMeaning) opt.classList.add('correct');
+    if(opt.textContent === correctAnswer) opt.classList.add('correct');
     else if(opt === btn) opt.classList.add('wrong');
   });
   quizScoreLive.textContent = `Điểm: ${quizScore}`;
@@ -978,6 +1169,15 @@ quizNextBtn.addEventListener('click', () => {
   } else {
     finishQuiz();
   }
+});
+
+quizDirectionBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    quizDirectionBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    quizDirectionSetting = btn.dataset.dir;
+    startQuiz();
+  });
 });
 
 function finishQuiz(){
@@ -1007,7 +1207,118 @@ function normalizeWord(w){
   return w.toLowerCase().replace(/\s*\([^)]*\)/g, '').trim();
 }
 
-function doLookup(){
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function fetchWithTimeout(url, ms){
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timer));
+}
+
+function fetchDictionaryEntry(word){
+  return fetchWithTimeout(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`, 5000)
+    .then(res => { if(!res.ok) throw new Error('not found'); return res.json(); })
+    .then(json => Array.isArray(json) && json.length ? json[0] : null);
+}
+
+function fetchViTranslation(word){
+  return fetchWithTimeout(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|vi`, 5000)
+    .then(res => { if(!res.ok) throw new Error('translation failed'); return res.json(); })
+    .then(json => {
+      const text = json && json.responseData ? json.responseData.translatedText : '';
+      if(!text || /mymemory|invalid|query/i.test(text)) throw new Error('no translation');
+      return text;
+    });
+}
+
+function renderExternalLinksRow(q, lower){
+  return `<div class="lookup-ext-row">
+    <span class="lookup-ext-label">Tra cứu chuyên sâu thêm:</span>
+    <a class="lookup-link" href="https://translate.google.com/?sl=en&tl=vi&text=${encodeURIComponent(q)}&op=translate" target="_blank" rel="noopener noreferrer">Google Translate ↗</a>
+    <a class="lookup-link" href="https://dictionary.cambridge.org/dictionary/english/${encodeURIComponent(lower)}" target="_blank" rel="noopener noreferrer">Cambridge Dictionary ↗</a>
+  </div>`;
+}
+
+function renderExternalFallback(q){
+  return `<a class="lookup-link" href="https://translate.google.com/?sl=en&tl=vi&text=${encodeURIComponent(q)}&op=translate" target="_blank" rel="noopener noreferrer">Mở Google Translate ↗</a>`;
+}
+
+let lookupRequestId = 0;
+
+function buildLookupCardHtml(state){
+  const { q, lower, dict, dictDone, vi, viDone } = state;
+  const word = dict ? dict.word : q;
+  const phonetic = dict ? (dict.phonetic || ((dict.phonetics || []).find(p => p.text) || {}).text || '') : '';
+
+  let html = `<div class="lookup-card">
+    <div class="lookup-card-head">
+      <span class="lookup-card-word">${escapeHtml(word)}</span>
+      ${phonetic ? `<span class="lookup-card-ipa">${escapeHtml(phonetic)}</span>` : ''}
+      <button class="speak-btn" id="lookupSpeakBtn" title="Nghe phát âm" aria-label="Nghe phát âm">🔊</button>
+      ${!dictDone ? '<span class="lookup-mini-loading">đang tải định nghĩa...</span>' : ''}
+    </div>`;
+
+  if(vi){
+    html += `<div class="lookup-card-vi">${escapeHtml(vi)}</div>`;
+  } else if(!viDone){
+    html += `<div class="lookup-card-vi lookup-mini-loading">đang dịch nghĩa tiếng Việt...</div>`;
+  }
+
+  if(dict && Array.isArray(dict.meanings) && dict.meanings.length){
+    dict.meanings.slice(0, 3).forEach(m => {
+      html += `<div class="lookup-meaning"><span class="pos-tag">${escapeHtml(m.partOfSpeech || '')}</span>`;
+      (m.definitions || []).slice(0, 2).forEach(d => {
+        html += `<div class="lookup-def">${escapeHtml(d.definition)}${d.example ? `<span class="ex">"${escapeHtml(d.example)}"</span>` : ''}</div>`;
+      });
+      html += `</div>`;
+    });
+  }
+
+  html += renderExternalLinksRow(q, lower);
+  html += `</div>`;
+  return html;
+}
+
+function renderLookupState(state){
+  const { q, dict, dictDone, dictFailed, vi, viDone, viFailed } = state;
+
+  // Nothing usable and both calls finished with nothing to show
+  if(dictDone && viDone && !dict && !vi){
+    const bothFailedByNetwork = dictFailed && viFailed;
+    lookupResult.innerHTML = `<div class="lookup-error">
+      ${bothFailedByNetwork
+        ? 'Không thể tra cứu ngay trong trang lúc này (có thể do giới hạn mạng khi xem trước). Hãy thử lại, hoặc tải file về máy và mở bằng trình duyệt để dùng đầy đủ tính năng.'
+        : `Không tìm thấy định nghĩa cho "<strong>${escapeHtml(q)}</strong>". Kiểm tra lại chính tả hoặc thử từ khác.`}
+      <br><span style="display:inline-block; margin-top:8px;">${renderExternalFallback(q)}</span>
+    </div>`;
+    return;
+  }
+
+  // Nothing resolved yet at all — keep the initial spinner
+  if(!dictDone && !viDone) return;
+
+  lookupResult.innerHTML = buildLookupCardHtml(state);
+
+  const audioUrl = dict ? ((dict.phonetics || []).find(p => p.audio) || {}).audio : '';
+  const word = dict ? dict.word : q;
+  const speakBtn = document.getElementById('lookupSpeakBtn');
+  if(speakBtn){
+    speakBtn.addEventListener('click', () => {
+      if(audioUrl){
+        const audio = new Audio(audioUrl);
+        audio.play().catch(() => speak(word));
+      } else {
+        speak(word);
+      }
+    });
+  }
+}
+
+async function doLookup(){
   const q = lookupInput.value.trim();
   if(!q) return;
   const lower = normalizeWord(q);
@@ -1025,24 +1336,29 @@ function doLookup(){
     jumpBtn.addEventListener('click', () => jumpToWord(found));
     lookupResult.appendChild(msg);
     lookupResult.appendChild(jumpBtn);
-  } else {
-    const gt = document.createElement('a');
-    gt.href = `https://translate.google.com/?sl=en&tl=vi&text=${encodeURIComponent(q)}&op=translate`;
-    gt.target = '_blank';
-    gt.rel = 'noopener noreferrer';
-    gt.className = 'lookup-link';
-    gt.textContent = 'Google Translate ↗';
-
-    const cam = document.createElement('a');
-    cam.href = `https://dictionary.cambridge.org/dictionary/english/${encodeURIComponent(lower)}`;
-    cam.target = '_blank';
-    cam.rel = 'noopener noreferrer';
-    cam.className = 'lookup-link';
-    cam.textContent = 'Cambridge Dictionary ↗';
-
-    lookupResult.appendChild(gt);
-    lookupResult.appendChild(cam);
+    return;
   }
+
+  const requestId = ++lookupRequestId;
+  lookupResult.innerHTML = `<span class="lookup-loading">Đang tra "${escapeHtml(q)}"...</span>`;
+
+  const state = { q, lower, dict: null, dictDone: false, dictFailed: false, vi: null, viDone: false, viFailed: false };
+
+  fetchDictionaryEntry(lower)
+    .then(d => { state.dict = d; })
+    .catch(() => { state.dictFailed = true; })
+    .finally(() => {
+      state.dictDone = true;
+      if(requestId === lookupRequestId) renderLookupState(state);
+    });
+
+  fetchViTranslation(lower)
+    .then(t => { state.vi = t; })
+    .catch(() => { state.viFailed = true; })
+    .finally(() => {
+      state.viDone = true;
+      if(requestId === lookupRequestId) renderLookupState(state);
+    });
 }
 
 function jumpToWord(item){
