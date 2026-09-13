@@ -93,7 +93,11 @@
     gap: 4px;
     margin-bottom: 22px;
     border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+    scrollbar-width: none;
   }
+
+  .tabs::-webkit-scrollbar{ display: none; }
 
   .tab-btn{
     background: none;
@@ -106,6 +110,8 @@
     margin-right: 22px;
     cursor: pointer;
     border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    flex-shrink: 0;
     transition: color .15s ease, border-color .15s ease;
   }
 
@@ -270,6 +276,64 @@
   td.word .speak-btn{ margin-left: 6px; }
   .fc-front .speak-btn{ margin-top: 10px; width: 30px; height: 30px; font-size: 13px; }
 
+  /* Skill tag */
+  .skill-tag{
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10.5px;
+    color: var(--paper-dim);
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    padding: 1px 7px;
+    margin-top: 4px;
+    white-space: nowrap;
+  }
+
+  /* Expand toggle + detail row */
+  .expand-btn{
+    background: none;
+    border: none;
+    color: var(--paper-dim);
+    cursor: pointer;
+    font-size: 11px;
+    padding: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .15s ease, color .15s ease;
+  }
+
+  tr.main-row.expanded .expand-btn{ transform: rotate(90deg); color: var(--accent-soft); }
+  tr.main-row{ cursor: pointer; }
+
+  tr.detail-row{ border-bottom: 1px solid var(--line); }
+  tr.detail-row.hidden{ display: none; }
+  tr.detail-row td{
+    padding: 0 10px 18px 10px;
+    background: rgba(236,231,216,0.02);
+  }
+
+  .detail-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+
+  .detail-block-title{ font-size: 11px; color: var(--paper-dim); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+  .detail-chip-row{ display: flex; flex-wrap: wrap; gap: 6px; }
+  .detail-chip{
+    font-size: 12.5px;
+    color: var(--paper);
+    background: var(--ink-softer);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 4px 9px;
+  }
+
   td.topic{ padding-top: 17px; }
 
   .pill{
@@ -329,7 +393,7 @@
 
   .flashcard{
     width: 100%; max-width: 480px;
-    height: 300px;
+    height: 400px;
     perspective: 1400px;
     cursor: pointer;
   }
@@ -351,17 +415,33 @@
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center;
     padding: 32px;
+    overflow-y: auto;
   }
 
   .fc-front .headword{ font-family: 'Fraunces', serif; font-size: 36px; color: var(--accent-soft); }
   .fc-front .ipa{ font-size: 15px; color: var(--paper-dim); margin-top: 10px; }
   .fc-front .hint{ font-size: 12px; color: var(--paper-dim); margin-top: 28px; opacity: .7; }
 
-  .fc-back{ transform: rotateY(180deg); }
-  .fc-back .meaning{ font-family: 'Fraunces', serif; font-size: 22px; color: var(--paper); margin-bottom: 14px; }
-  .fc-back .example{ font-size: 14.5px; font-style: italic; color: var(--paper-dim); line-height: 1.5; }
+  .fc-back{ transform: rotateY(180deg); justify-content: flex-start; padding-top: 40px; }
+  .fc-back .meaning{ font-family: 'Fraunces', serif; font-size: 22px; color: var(--paper); margin-bottom: 12px; }
+  .fc-back .example{ font-size: 14.5px; font-style: italic; color: var(--paper-dim); line-height: 1.5; margin-bottom: 16px; }
+
+  .fc-extra{ width: 100%; text-align: left; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 4px; }
+  .fc-extra-block{ margin-bottom: 12px; }
+  .fc-extra-block:last-child{ margin-bottom: 0; }
+  .fc-extra-title{ font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--paper-dim); margin-bottom: 6px; }
+  .fc-extra-chips{ display: flex; flex-wrap: wrap; gap: 6px; }
+  .fc-extra-chip{
+    font-size: 12px;
+    color: var(--paper);
+    background: var(--ink-softer);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 3px 8px;
+  }
 
   .fc-topic-tag{ position: absolute; top: 16px; left: 16px; }
+  .fc-skill-tag{ position: absolute; top: 16px; right: 16px; }
 
   .fc-nav{ display: flex; justify-content: center; align-items: center; gap: 16px; }
 
@@ -448,6 +528,127 @@
     background: none; border: 1px solid var(--accent); color: var(--accent-soft);
     padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 14px;
   }
+
+  /* ---- Gap-fill (Điền từ) ---- */
+  .gap-panel{ max-width: 600px; margin: 0 auto; }
+  .gap-progress{ font-size: 13px; color: var(--paper-dim); margin-bottom: 8px; text-align: center; }
+  .gap-score{ font-family: 'Fraunces', serif; font-size: 15px; color: var(--accent-soft); text-align: center; margin-bottom: 26px; }
+
+  .gap-sentence{
+    font-family: 'Fraunces', serif;
+    font-size: 21px;
+    line-height: 1.6;
+    color: var(--paper);
+    text-align: center;
+    margin-bottom: 26px;
+  }
+
+  .gap-sentence .blank{
+    display: inline-block;
+    min-width: 90px;
+    border-bottom: 2px solid var(--accent);
+    color: var(--accent-soft);
+    padding: 0 4px;
+  }
+
+  .gap-meaning-hint{ text-align: center; font-size: 13px; color: var(--paper-dim); margin-bottom: 22px; }
+
+  .gap-options{ display: flex; flex-direction: column; gap: 10px; }
+
+  .gap-option{
+    background: var(--ink-soft); border: 1px solid var(--line-strong); color: var(--paper);
+    padding: 14px 18px; border-radius: 4px; text-align: left; cursor: pointer;
+    font-family: 'Work Sans', sans-serif; font-size: 14.5px;
+    transition: all .12s ease;
+  }
+
+  .gap-option:hover:not(:disabled){ border-color: var(--accent); }
+  .gap-option.correct{ background: rgba(110,148,105,0.22); border-color: var(--t-env); color: var(--paper); }
+  .gap-option.wrong{ background: rgba(161,92,76,0.22); border-color: var(--t-debate); color: var(--paper); }
+  .gap-option:disabled{ cursor: default; }
+
+  .gap-next{
+    margin-top: 22px; width: 100%;
+    background: var(--accent); border: none; color: var(--ink);
+    padding: 13px; border-radius: 4px; font-size: 14.5px; font-weight: 500;
+    cursor: pointer; display: none;
+  }
+  .gap-next.show{ display: block; }
+
+  .gap-result{ text-align: center; padding: 40px 0; display: none; }
+  .gap-result.show{ display: block; }
+  .gap-result .big-score{ font-family: 'Fraunces', serif; font-size: 52px; color: var(--accent-soft); }
+  .gap-result .msg{ color: var(--paper-dim); margin: 10px 0 28px; }
+
+  /* ---- Dictation (Chính tả) ---- */
+  .dict-panel{ max-width: 480px; margin: 0 auto; text-align: center; }
+  .dict-progress{ font-size: 13px; color: var(--paper-dim); margin-bottom: 8px; }
+  .dict-score{ font-family: 'Fraunces', serif; font-size: 15px; color: var(--accent-soft); margin-bottom: 30px; }
+
+  .dict-play-btn{
+    width: 76px; height: 76px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: var(--ink-soft);
+    color: var(--accent-soft);
+    font-size: 28px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 26px;
+    transition: all .15s ease;
+  }
+
+  .dict-play-btn:hover{ border-color: var(--accent); }
+
+  .dict-ready{ padding: 20px 8px 10px; }
+  .dict-ready-icon{ font-size: 34px; margin-bottom: 14px; opacity: .8; }
+  .dict-ready-title{ font-family: 'Fraunces', serif; font-size: 21px; color: var(--paper); margin-bottom: 10px; }
+  .dict-ready-msg{ font-size: 13.5px; color: var(--paper-dim); line-height: 1.6; max-width: 360px; margin: 0 auto 26px; }
+
+  .dict-start-btn{
+    background: var(--accent);
+    border: none;
+    color: var(--ink);
+    padding: 13px 28px;
+    border-radius: 24px;
+    font-size: 14.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity .15s ease;
+  }
+  .dict-start-btn:hover{ opacity: .88; }
+
+  .dict-hint{ font-size: 12.5px; color: var(--paper-dim); margin-bottom: 22px; }
+
+  .dict-input{
+    width: 100%;
+    background: var(--ink-soft);
+    border: 1px solid var(--line-strong);
+    color: var(--paper);
+    padding: 13px 16px;
+    border-radius: 4px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    text-align: center;
+    outline: none;
+    margin-bottom: 16px;
+    transition: border-color .15s ease;
+  }
+
+  .dict-input:focus{ border-color: var(--accent); }
+  .dict-input.correct{ border-color: var(--t-env); }
+  .dict-input.wrong{ border-color: var(--t-debate); }
+
+  .dict-feedback{ font-size: 13.5px; margin-bottom: 18px; min-height: 20px; }
+  .dict-feedback.correct{ color: var(--t-env); }
+  .dict-feedback.wrong{ color: var(--paper-dim); }
+
+  .dict-actions{ display: flex; gap: 10px; justify-content: center; }
+
+  .dict-result{ text-align: center; padding: 40px 0; display: none; }
+  .dict-result.show{ display: block; }
+  .dict-result .big-score{ font-family: 'Fraunces', serif; font-size: 52px; color: var(--accent-soft); }
+  .dict-result .msg{ color: var(--paper-dim); margin: 10px 0 28px; }
 
   .lookup-box{
     border: 1px solid var(--line-strong);
@@ -577,9 +778,10 @@
 
   @media (max-width: 640px){
     td.example, thead th.col-example, td.topic, thead th.col-topic{ display: none; }
-    .flashcard{ height: 260px; }
+    .flashcard{ height: 340px; }
     .fc-front .headword{ font-size: 28px; }
     .quiz-question{ font-size: 24px; }
+    .detail-grid{ grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -616,6 +818,8 @@
     <button class="tab-btn active" data-tab="list">Danh sách</button>
     <button class="tab-btn" data-tab="flashcard">Flashcard</button>
     <button class="tab-btn" data-tab="quiz">Trắc nghiệm</button>
+    <button class="tab-btn" data-tab="gapfill">Điền từ</button>
+    <button class="tab-btn" data-tab="dictation">Chính tả</button>
   </div>
 
   <div class="topic-row" id="topicRow"></div>
@@ -661,6 +865,7 @@
         <div class="flashcard-inner">
           <div class="fc-face fc-front">
             <span class="pill fc-topic-tag" id="fcTopicTag"></span>
+            <span class="skill-tag fc-skill-tag" id="fcSkillTag"></span>
             <span class="headword" id="fcWord"></span>
             <span class="ipa" id="fcIpa"></span>
             <span class="pos-tag" id="fcPos"></span>
@@ -670,6 +875,16 @@
           <div class="fc-face fc-back">
             <div class="meaning" id="fcMeaning"></div>
             <div class="example" id="fcExample"></div>
+            <div class="fc-extra">
+              <div class="fc-extra-block">
+                <div class="fc-extra-title">Collocation</div>
+                <div class="fc-extra-chips" id="fcCollocations"></div>
+              </div>
+              <div class="fc-extra-block">
+                <div class="fc-extra-title">Đồng nghĩa</div>
+                <div class="fc-extra-chips" id="fcSynonyms"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -708,6 +923,54 @@
     </div>
   </section>
 
+  <!-- GAP-FILL VIEW -->
+  <section class="view" id="view-gapfill">
+    <div class="gap-panel">
+      <div id="gapActive">
+        <div class="gap-progress" id="gapProgress">Câu 1 / 10</div>
+        <div class="gap-score" id="gapScoreLive">Điểm: 0</div>
+        <div class="gap-sentence" id="gapSentence"></div>
+        <div class="gap-meaning-hint" id="gapMeaningHint"></div>
+        <div class="gap-options" id="gapOptions"></div>
+        <button class="gap-next" id="gapNextBtn">Câu tiếp theo</button>
+      </div>
+      <div class="gap-result" id="gapResult">
+        <div class="big-score" id="gapFinalScore">0 / 10</div>
+        <div class="msg" id="gapFinalMsg"></div>
+        <button class="quiz-restart" id="gapRestart">Làm bài mới</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DICTATION VIEW -->
+  <section class="view" id="view-dictation">
+    <div class="dict-panel">
+      <div class="dict-ready" id="dictReady">
+        <div class="dict-ready-icon">🔊</div>
+        <div class="dict-ready-title">Bài luyện chính tả</div>
+        <div class="dict-ready-msg">Bài này sẽ phát âm thanh qua loa. Hãy đảm bảo bạn đã sẵn sàng nghe (đeo tai nghe nếu ở nơi công cộng), rồi bấm nút bên dưới để bắt đầu.</div>
+        <button class="dict-start-btn" id="dictStartBtn">▶ Bắt đầu nghe</button>
+      </div>
+      <div id="dictActive" style="display:none;">
+        <div class="dict-progress" id="dictProgress">Từ 1 / 10</div>
+        <div class="dict-score" id="dictScoreLive">Điểm: 0</div>
+        <button class="dict-play-btn" id="dictPlayBtn" title="Nghe lại" aria-label="Nghe lại">🔊</button>
+        <div class="dict-hint">Nghe và gõ lại đúng chính tả của từ</div>
+        <input type="text" class="dict-input" id="dictInput" placeholder="Gõ từ bạn nghe được..." autocomplete="off" autocapitalize="off" spellcheck="false">
+        <div class="dict-feedback" id="dictFeedback"></div>
+        <div class="dict-actions">
+          <button class="filter-btn" id="dictCheckBtn">Kiểm tra</button>
+          <button class="gap-next" id="dictNextBtn" style="width:auto; margin-top:0;">Từ tiếp theo</button>
+        </div>
+      </div>
+      <div class="dict-result" id="dictResult">
+        <div class="big-score" id="dictFinalScore">0 / 10</div>
+        <div class="msg" id="dictFinalMsg"></div>
+        <button class="quiz-restart" id="dictRestart">Làm lại</button>
+      </div>
+    </div>
+  </section>
+
   <footer>Nhấp vào ô vuông (danh sách) hoặc nút "Đánh dấu đã học" (flashcard) để lưu tiến độ. Trạng thái chỉ được lưu trong phiên xem hiện tại. Từ loại: n = danh từ, v = động từ, adj = tính từ.</footer>
 
 </div>
@@ -719,6 +982,12 @@ const POS_LABELS = {
   adj: { abbr: "adj", full: "tính từ" },
 };
 
+const SKILL_LABELS = {
+  writing:  { abbr: "✍️ Writing",  full: "Phù hợp cho Writing (văn phong học thuật)" },
+  speaking: { abbr: "🗣️ Speaking", full: "Phù hợp cho Speaking (tự nhiên khi nói)" },
+  both:     { abbr: "✍️🗣️ Cả hai", full: "Dùng tốt cho cả Writing và Speaking" },
+};
+
 const TOPICS = {
   environment: { label: "Môi trường & Tác động", color: "var(--t-env)" },
   heritage:    { label: "Di sản & Văn hoá",       color: "var(--t-heritage)" },
@@ -728,66 +997,66 @@ const TOPICS = {
 };
 
 const data = [
-  {w:"voracious", ipa:"/vəˈreɪʃəs/", topic:"business", pos:"adj", m:"tham lam, ham mê tột độ (ăn/đọc/học)", e:"She has a voracious appetite for knowledge, reading three books a week."},
-  {w:"enhance", ipa:"/ɪnˈhæns/", topic:"business", pos:"v", m:"nâng cao, cải thiện", e:"Regular exercise can enhance both your mood and your memory."},
-  {w:"appetite", ipa:"/ˈæpɪtaɪt/", topic:"business", pos:"n", m:"sự thèm ăn; ham muốn, khát khao", e:"Traveling abroad gave him a real appetite for adventure."},
-  {w:"consumption", ipa:"/kənˈsʌmpʃən/", topic:"environment", pos:"n", m:"sự tiêu thụ", e:"The government is trying to reduce fossil fuel consumption."},
-  {w:"exposure", ipa:"/ɪkˈspoʊʒər/", topic:"environment", pos:"n", m:"sự phơi bày, sự tiếp xúc", e:"Long exposure to sunlight can damage the skin."},
-  {w:"indiscriminate", ipa:"/ˌɪndɪˈskrɪmɪnət/", topic:"environment", pos:"adj", m:"bừa bãi, không phân biệt", e:"The bombing caused indiscriminate destruction across the city."},
-  {w:"condemn", ipa:"/kənˈdɛm/", topic:"environment", pos:"v", m:"lên án, chỉ trích gay gắt", e:"Human rights groups condemned the violent crackdown."},
-  {w:"degradation", ipa:"/ˌdɛɡrəˈdeɪʃən/", topic:"environment", pos:"n", m:"sự suy thoái, xuống cấp", e:"Deforestation has led to serious environmental degradation."},
-  {w:"disposal", ipa:"/dɪˈspoʊzəl/", topic:"environment", pos:"n", m:"sự vứt bỏ, xử lý (rác thải)", e:"The factory was fined for illegal waste disposal."},
-  {w:"contaminate", ipa:"/kənˈtæmɪneɪt/", topic:"environment", pos:"v", m:"làm ô nhiễm, làm bẩn", e:"Chemical spills can contaminate rivers and groundwater."},
-  {w:"eminent", ipa:"/ˈɛmɪnənt/", topic:"debate", pos:"adj", m:"lỗi lạc, xuất chúng", e:"She consulted an eminent professor of economics."},
-  {w:"imminent", ipa:"/ˈɪmɪnənt/", topic:"debate", pos:"adj", m:"sắp xảy ra, cận kề", e:"Forecasters warned that a storm was imminent."},
-  {w:"prominent", ipa:"/ˈprɒmɪnənt/", topic:"debate", pos:"adj", m:"nổi bật, có tiếng", e:"He played a prominent role in the peace negotiations."},
-  {w:"collapse", ipa:"/kəˈlæps/", topic:"life", pos:"v", m:"sụp đổ, suy sụp", e:"The old bridge collapsed after years of neglect."},
-  {w:"decisive", ipa:"/dɪˈsaɪsɪv/", topic:"business", pos:"adj", m:"quyết đoán; mang tính quyết định", e:"The coach made a decisive substitution in the final minutes."},
-  {w:"steeped (in)", ipa:"/stiːpt/", topic:"heritage", pos:"adj", m:"đắm chìm, thấm đẫm trong", e:"The town is steeped in centuries of tradition."},
-  {w:"immersed (in)", ipa:"/ɪˈmɜːrst/", topic:"heritage", pos:"adj", m:"chìm đắm, đắm mình trong", e:"She was completely immersed in her new novel."},
-  {w:"reflect", ipa:"/rɪˈflɛkt/", topic:"heritage", pos:"v", m:"phản ánh; suy ngẫm", e:"His paintings reflect his fascination with the sea."},
-  {w:"preserve", ipa:"/prɪˈzɜːrv/", topic:"heritage", pos:"v", m:"bảo tồn, gìn giữ", e:"The organization works to preserve endangered languages."},
-  {w:"landmark", ipa:"/ˈlændmɑːrk/", topic:"heritage", pos:"n", m:"mốc son, công trình mang tính bước ngoặt", e:"The court's ruling was a landmark decision for civil rights."},
-  {w:"replete (with)", ipa:"/rɪˈpliːt/", topic:"heritage", pos:"adj", m:"đầy ắp, chứa đầy", e:"The museum's archive is replete with rare manuscripts."},
-  {w:"curate", ipa:"/ˈkjʊəreɪt/", topic:"heritage", pos:"v", m:"tuyển chọn, phụ trách (triển lãm, nội dung)", e:"She was asked to curate an exhibition of ancient pottery."},
-  {w:"artifact", ipa:"/ˈɑːrtɪfækt/", topic:"heritage", pos:"n", m:"hiện vật, cổ vật", e:"Archaeologists uncovered a bronze artifact from the tomb."},
-  {w:"intricate", ipa:"/ˈɪntrɪkət/", topic:"heritage", pos:"adj", m:"phức tạp, tinh vi", e:"The necklace features an intricate pattern of silver threads."},
-  {w:"narrative", ipa:"/ˈnærətɪv/", topic:"heritage", pos:"n", m:"câu chuyện, mạch tường thuật", e:"The film follows a nonlinear narrative structure."},
-  {w:"abound (in/with)", ipa:"/əˈbaʊnd/", topic:"heritage", pos:"v", m:"có rất nhiều, phong phú", e:"The coastal waters abound with colorful fish."},
-  {w:"flourish", ipa:"/ˈflɜːrɪʃ/", topic:"business", pos:"v", m:"phát triển mạnh, hưng thịnh", e:"Small businesses flourished after the new policy was introduced."},
-  {w:"entrepreneur", ipa:"/ˌɑːntrəprəˈnɜːr/", topic:"business", pos:"n", m:"doanh nhân khởi nghiệp", e:"The young entrepreneur launched her startup at twenty-two."},
-  {w:"innovator", ipa:"/ˈɪnəveɪtər/", topic:"business", pos:"n", m:"người đổi mới, nhà cải tiến", e:"He is regarded as one of the leading innovators in renewable energy."},
-  {w:"intense", ipa:"/ɪnˈtɛns/", topic:"life", pos:"adj", m:"mãnh liệt, dữ dội", e:"The competition between the two teams was intense."},
-  {w:"prognosticate", ipa:"/prəɡˈnɒstɪkeɪt/", topic:"debate", pos:"v", m:"tiên đoán, dự báo trước", e:"Economists tried to prognosticate how the market would react."},
-  {w:"contend", ipa:"/kənˈtɛnd/", topic:"debate", pos:"v", m:"khẳng định, tranh luận; đấu tranh", e:"Critics contend that the policy will harm small farmers."},
-  {w:"inevitable", ipa:"/ɪnˈɛvɪtəbəl/", topic:"debate", pos:"adj", m:"không thể tránh khỏi, tất yếu", e:"Some conflict was inevitable given their opposing views."},
-  {w:"disruptive", ipa:"/dɪsˈrʌptɪv/", topic:"business", pos:"adj", m:"gây gián đoạn, phá vỡ trật tự cũ", e:"The startup introduced a disruptive technology that reshaped the industry."},
-  {w:"divided", ipa:"/dɪˈvaɪdɪd/", topic:"debate", pos:"adj", m:"bị chia rẽ", e:"Public opinion remains divided on the new law."},
-  {w:"paradox", ipa:"/ˈpærədɒks/", topic:"debate", pos:"n", m:"nghịch lý", e:"It's a paradox that the more choices we have, the less satisfied we feel."},
-  {w:"dilemma", ipa:"/dɪˈlɛmə/", topic:"debate", pos:"n", m:"tình huống khó xử, thế lưỡng nan", e:"She faced a difficult dilemma between career and family."},
-  {w:"irony", ipa:"/ˈaɪrəni/", topic:"debate", pos:"n", m:"sự mỉa mai, trớ trêu", e:"It was a bitter irony that the rescuer himself needed rescuing."},
-  {w:"blur", ipa:"/blɜːr/", topic:"life", pos:"n", m:"làm mờ, nhòe đi", e:"The fast-moving train became a blur through the window."},
-  {w:"enduring", ipa:"/ɪnˈdʊrɪŋ/", topic:"business", pos:"adj", m:"lâu bền, bền vững theo thời gian", e:"Their friendship has proven remarkably enduring over the decades."},
-  {w:"realm", ipa:"/rɛlm/", topic:"heritage", pos:"n", m:"lĩnh vực, phạm vi; vương quốc", e:"The discovery opened up a whole new realm of possibilities."},
-  {w:"speculative", ipa:"/ˈspɛkjʊlətɪv/", topic:"business", pos:"adj", m:"mang tính suy đoán, đầu cơ", e:"Investors were warned that the project was highly speculative."},
-  {w:"embed", ipa:"/ɪmˈbɛd/", topic:"life", pos:"v", m:"gắn chặt, cắm sâu, nhúng vào", e:"The company embedded a tracking chip in every product."},
-  {w:"oppose", ipa:"/əˈpoʊz/", topic:"debate", pos:"v", m:"phản đối", e:"Local residents strongly opposed the construction of the highway."},
-  {w:"associate", ipa:"/əˈsoʊʃieɪt/", topic:"debate", pos:"v", m:"liên kết, gắn liền với; đồng nghiệp", e:"People often associate the color red with danger."},
-  {w:"annals", ipa:"/ˈænəlz/", topic:"heritage", pos:"n", m:"biên niên sử, sử sách", e:"His achievements are recorded in the annals of medical history."},
-  {w:"controversial", ipa:"/ˌkɒntrəˈvɜːrʃəl/", topic:"debate", pos:"adj", m:"gây tranh cãi", e:"The politician's remarks sparked a controversial debate."},
-  {w:"dispute", ipa:"/dɪˈspjuːt/", topic:"debate", pos:"n", m:"tranh chấp, tranh cãi", e:"The two countries are locked in a border dispute."},
-  {w:"intellectual", ipa:"/ˌɪntəˈlɛktʃuəl/", topic:"heritage", pos:"n", m:"trí thức; thuộc về trí tuệ", e:"The café was a gathering place for artists and intellectuals."},
-  {w:"chronicle", ipa:"/ˈkrɒnɪkəl/", topic:"heritage", pos:"v", m:"ghi chép biên niên; biên niên sử", e:"The documentary chronicles the rise and fall of the empire."},
-  {w:"compound", ipa:"/kəmˈpaʊnd/", topic:"environment", pos:"v", m:"hợp chất; làm trầm trọng thêm", e:"Missing the deadline only compounded her stress."},
-  {w:"foster", ipa:"/ˈfɒstər/", topic:"business", pos:"v", m:"nuôi dưỡng, thúc đẩy (sự phát triển)", e:"The program aims to foster creativity among young students."},
-  {w:"frustrated", ipa:"/frʌˈstreɪtɪd/", topic:"life", pos:"adj", m:"thất vọng, bực bội", e:"He grew frustrated after hours of fruitless searching."},
-  {w:"malfunction", ipa:"/ˌmælˈfʌŋkʃən/", topic:"environment", pos:"v", m:"trục trặc, hỏng hóc", e:"The spacecraft's systems began to malfunction mid-flight."},
-  {w:"anticipate", ipa:"/ænˈtɪsɪpeɪt/", topic:"business", pos:"v", m:"mong đợi, dự đoán trước", e:"We anticipate strong demand for the product this holiday season."},
-  {w:"drudgery", ipa:"/ˈdrʌdʒəri/", topic:"life", pos:"n", m:"công việc nhàm chán, cực nhọc", e:"Farm life in those days was full of endless drudgery."},
-  {w:"pure", ipa:"/pjʊər/", topic:"life", pos:"adj", m:"tinh khiết, thuần khiết", e:"The spring water here is remarkably pure."},
-  {w:"variation", ipa:"/ˌvɛəriˈeɪʃən/", topic:"life", pos:"n", m:"sự biến đổi, biến thể", e:"There is significant variation in prices between the two stores."},
-  {w:"skeptical", ipa:"/ˈskɛptɪkəl/", topic:"debate", pos:"adj", m:"hoài nghi", e:"She remained skeptical of claims that the diet worked."},
-  {w:"displace", ipa:"/dɪsˈpleɪs/", topic:"environment", pos:"v", m:"thay thế; làm dịch chuyển, di dời", e:"Rising sea levels have already displaced thousands of coastal residents."}
+  {w:"voracious", ipa:"/vəˈreɪʃəs/", topic:"business", pos:"adj",  syn:["insatiable", "ravenous"], col:["voracious appetite", "voracious reader"], skill:"both", gap:"voracious", m:"tham lam, ham mê tột độ (ăn/đọc/học)", e:"She has a voracious appetite for knowledge, reading three books a week."},
+  {w:"enhance", ipa:"/ɪnˈhæns/", topic:"business", pos:"v",  syn:["improve", "boost"], col:["enhance performance", "enhance the quality of"], skill:"both", gap:"enhance", m:"nâng cao, cải thiện", e:"Regular exercise can enhance both your mood and your memory."},
+  {w:"appetite", ipa:"/ˈæpɪtaɪt/", topic:"business", pos:"n",  syn:["hunger", "craving"], col:["have an appetite for", "loss of appetite"], skill:"both", gap:"appetite", m:"sự thèm ăn; ham muốn, khát khao", e:"Traveling abroad gave him a real appetite for adventure."},
+  {w:"consumption", ipa:"/kənˈsʌmpʃən/", topic:"environment", pos:"n",  syn:["usage", "intake"], col:["energy consumption", "reduce consumption"], skill:"writing", gap:"consumption", m:"sự tiêu thụ", e:"The government is trying to reduce fossil fuel consumption."},
+  {w:"exposure", ipa:"/ɪkˈspoʊʒər/", topic:"environment", pos:"n",  syn:["contact", "exhibition"], col:["exposure to sunlight", "media exposure"], skill:"writing", gap:"exposure", m:"sự phơi bày, sự tiếp xúc", e:"Long exposure to sunlight can damage the skin."},
+  {w:"indiscriminate", ipa:"/ˌɪndɪˈskrɪmɪnət/", topic:"environment", pos:"adj",  syn:["random", "arbitrary"], col:["indiscriminate use", "indiscriminate violence"], skill:"writing", gap:"indiscriminate", m:"bừa bãi, không phân biệt", e:"The bombing caused indiscriminate destruction across the city."},
+  {w:"condemn", ipa:"/kənˈdɛm/", topic:"environment", pos:"v",  syn:["denounce", "criticize"], col:["condemn an action", "widely condemned"], skill:"both", gap:"condemned", m:"lên án, chỉ trích gay gắt", e:"Human rights groups condemned the violent crackdown."},
+  {w:"degradation", ipa:"/ˌdɛɡrəˈdeɪʃən/", topic:"environment", pos:"n",  syn:["deterioration", "decline"], col:["environmental degradation", "land degradation"], skill:"writing", gap:"degradation", m:"sự suy thoái, xuống cấp", e:"Deforestation has led to serious environmental degradation."},
+  {w:"disposal", ipa:"/dɪˈspoʊzəl/", topic:"environment", pos:"n",  syn:["removal", "discarding"], col:["waste disposal", "at your disposal"], skill:"writing", gap:"disposal", m:"sự vứt bỏ, xử lý (rác thải)", e:"The factory was fined for illegal waste disposal."},
+  {w:"contaminate", ipa:"/kənˈtæmɪneɪt/", topic:"environment", pos:"v",  syn:["pollute", "taint"], col:["contaminate water", "contaminated soil"], skill:"writing", gap:"contaminate", m:"làm ô nhiễm, làm bẩn", e:"Chemical spills can contaminate rivers and groundwater."},
+  {w:"eminent", ipa:"/ˈɛmɪnənt/", topic:"debate", pos:"adj",  syn:["distinguished", "renowned"], col:["eminent scientist", "eminent scholar"], skill:"writing", gap:"eminent", m:"lỗi lạc, xuất chúng", e:"She consulted an eminent professor of economics."},
+  {w:"imminent", ipa:"/ˈɪmɪnənt/", topic:"debate", pos:"adj",  syn:["impending", "approaching"], col:["imminent danger", "imminent threat"], skill:"both", gap:"imminent", m:"sắp xảy ra, cận kề", e:"Forecasters warned that a storm was imminent."},
+  {w:"prominent", ipa:"/ˈprɒmɪnənt/", topic:"debate", pos:"adj",  syn:["notable", "leading"], col:["prominent role", "prominent figure"], skill:"both", gap:"prominent", m:"nổi bật, có tiếng", e:"He played a prominent role in the peace negotiations."},
+  {w:"collapse", ipa:"/kəˈlæps/", topic:"life", pos:"v",  syn:["crumble", "fall apart"], col:["economic collapse", "collapse under pressure"], skill:"both", gap:"collapsed", m:"sụp đổ, suy sụp", e:"The old bridge collapsed after years of neglect."},
+  {w:"decisive", ipa:"/dɪˈsaɪsɪv/", topic:"business", pos:"adj",  syn:["crucial", "determined"], col:["decisive factor", "decisive action"], skill:"both", gap:"decisive", m:"quyết đoán; mang tính quyết định", e:"The coach made a decisive substitution in the final minutes."},
+  {w:"steeped (in)", ipa:"/stiːpt/", topic:"heritage", pos:"adj",  syn:["immersed", "saturated"], col:["steeped in history", "steeped in tradition"], skill:"writing", gap:"steeped", m:"đắm chìm, thấm đẫm trong", e:"The town is steeped in centuries of tradition."},
+  {w:"immersed (in)", ipa:"/ɪˈmɜːrst/", topic:"heritage", pos:"adj",  syn:["absorbed", "engrossed"], col:["immersed in culture", "fully immersed"], skill:"both", gap:"immersed", m:"chìm đắm, đắm mình trong", e:"She was completely immersed in her new novel."},
+  {w:"reflect", ipa:"/rɪˈflɛkt/", topic:"heritage", pos:"v",  syn:["mirror", "indicate"], col:["reflect on", "reflect a trend"], skill:"both", gap:"reflect", m:"phản ánh; suy ngẫm", e:"His paintings reflect his fascination with the sea."},
+  {w:"preserve", ipa:"/prɪˈzɜːrv/", topic:"heritage", pos:"v",  syn:["protect", "conserve"], col:["preserve tradition", "preserve the environment"], skill:"both", gap:"preserve", m:"bảo tồn, gìn giữ", e:"The organization works to preserve endangered languages."},
+  {w:"landmark", ipa:"/ˈlændmɑːrk/", topic:"heritage", pos:"n",  syn:["milestone", "turning point"], col:["landmark decision", "landmark agreement"], skill:"writing", gap:"landmark", m:"mốc son, công trình mang tính bước ngoặt", e:"The court's ruling was a landmark decision for civil rights."},
+  {w:"replete (with)", ipa:"/rɪˈpliːt/", topic:"heritage", pos:"adj",  syn:["full of", "brimming with"], col:["replete with examples", "replete with detail"], skill:"writing", gap:"replete", m:"đầy ắp, chứa đầy", e:"The museum's archive is replete with rare manuscripts."},
+  {w:"curate", ipa:"/ˈkjʊəreɪt/", topic:"heritage", pos:"v",  syn:["select", "organize"], col:["curate an exhibition", "carefully curated"], skill:"writing", gap:"curate", m:"tuyển chọn, phụ trách (triển lãm, nội dung)", e:"She was asked to curate an exhibition of ancient pottery."},
+  {w:"artifact", ipa:"/ˈɑːrtɪfækt/", topic:"heritage", pos:"n",  syn:["relic", "object"], col:["ancient artifact", "cultural artifact"], skill:"writing", gap:"artifact", m:"hiện vật, cổ vật", e:"Archaeologists uncovered a bronze artifact from the tomb."},
+  {w:"intricate", ipa:"/ˈɪntrɪkət/", topic:"heritage", pos:"adj",  syn:["complex", "elaborate"], col:["intricate design", "intricate pattern"], skill:"both", gap:"intricate", m:"phức tạp, tinh vi", e:"The necklace features an intricate pattern of silver threads."},
+  {w:"narrative", ipa:"/ˈnærətɪv/", topic:"heritage", pos:"n",  syn:["story", "account"], col:["narrative structure", "shape the narrative"], skill:"writing", gap:"narrative", m:"câu chuyện, mạch tường thuật", e:"The film follows a nonlinear narrative structure."},
+  {w:"abound (in/with)", ipa:"/əˈbaʊnd/", topic:"heritage", pos:"v",  syn:["be plentiful", "teem with"], col:["opportunities abound", "abound with wildlife"], skill:"writing", gap:"abound", m:"có rất nhiều, phong phú", e:"The coastal waters abound with colorful fish."},
+  {w:"flourish", ipa:"/ˈflɜːrɪʃ/", topic:"business", pos:"v",  syn:["thrive", "prosper"], col:["businesses flourish", "flourish under"], skill:"both", gap:"flourished", m:"phát triển mạnh, hưng thịnh", e:"Small businesses flourished after the new policy was introduced."},
+  {w:"entrepreneur", ipa:"/ˌɑːntrəprəˈnɜːr/", topic:"business", pos:"n",  syn:["business owner", "founder"], col:["young entrepreneur", "successful entrepreneur"], skill:"both", gap:"entrepreneur", m:"doanh nhân khởi nghiệp", e:"The young entrepreneur launched her startup at twenty-two."},
+  {w:"innovator", ipa:"/ˈɪnəveɪtər/", topic:"business", pos:"n",  syn:["pioneer", "inventor"], col:["leading innovator", "technology innovator"], skill:"both", gap:"innovators", m:"người đổi mới, nhà cải tiến", e:"He is regarded as one of the leading innovators in renewable energy."},
+  {w:"intense", ipa:"/ɪnˈtɛns/", topic:"life", pos:"adj",  syn:["fierce", "extreme"], col:["intense pressure", "intense competition"], skill:"both", gap:"intense", m:"mãnh liệt, dữ dội", e:"The competition between the two teams was intense."},
+  {w:"prognosticate", ipa:"/prəɡˈnɒstɪkeɪt/", topic:"debate", pos:"v",  syn:["predict", "forecast"], col:["prognosticate the future", "prognosticate trends"], skill:"writing", gap:"prognosticate", m:"tiên đoán, dự báo trước", e:"Economists tried to prognosticate how the market would react."},
+  {w:"contend", ipa:"/kənˈtɛnd/", topic:"debate", pos:"v",  syn:["argue", "assert"], col:["critics contend that", "contend with challenges"], skill:"writing", gap:"contend", m:"khẳng định, tranh luận; đấu tranh", e:"Critics contend that the policy will harm small farmers."},
+  {w:"inevitable", ipa:"/ɪnˈɛvɪtəbəl/", topic:"debate", pos:"adj",  syn:["unavoidable", "certain"], col:["inevitable consequence", "seem inevitable"], skill:"both", gap:"inevitable", m:"không thể tránh khỏi, tất yếu", e:"Some conflict was inevitable given their opposing views."},
+  {w:"disruptive", ipa:"/dɪsˈrʌptɪv/", topic:"business", pos:"adj",  syn:["groundbreaking", "disturbing"], col:["disruptive technology", "disruptive behavior"], skill:"both", gap:"disruptive", m:"gây gián đoạn, phá vỡ trật tự cũ", e:"The startup introduced a disruptive technology that reshaped the industry."},
+  {w:"divided", ipa:"/dɪˈvaɪdɪd/", topic:"debate", pos:"adj",  syn:["split", "polarized"], col:["deeply divided", "divided opinion"], skill:"both", gap:"divided", m:"bị chia rẽ", e:"Public opinion remains divided on the new law."},
+  {w:"paradox", ipa:"/ˈpærədɒks/", topic:"debate", pos:"n",  syn:["contradiction", "anomaly"], col:["a striking paradox", "paradox of choice"], skill:"writing", gap:"paradox", m:"nghịch lý", e:"It's a paradox that the more choices we have, the less satisfied we feel."},
+  {w:"dilemma", ipa:"/dɪˈlɛmə/", topic:"debate", pos:"n",  syn:["predicament", "quandary"], col:["face a dilemma", "moral dilemma"], skill:"both", gap:"dilemma", m:"tình huống khó xử, thế lưỡng nan", e:"She faced a difficult dilemma between career and family."},
+  {w:"irony", ipa:"/ˈaɪrəni/", topic:"debate", pos:"n",  syn:["contradiction", "twist"], col:["bitter irony", "the irony is that"], skill:"both", gap:"irony", m:"sự mỉa mai, trớ trêu", e:"It was a bitter irony that the rescuer himself needed rescuing."},
+  {w:"blur", ipa:"/blɜːr/", topic:"life", pos:"n",  syn:["smudge", "haze"], col:["blur the line", "become a blur"], skill:"both", gap:"blur", m:"làm mờ, nhòe đi", e:"The fast-moving train became a blur through the window."},
+  {w:"enduring", ipa:"/ɪnˈdʊrɪŋ/", topic:"business", pos:"adj",  syn:["lasting", "long-lasting"], col:["enduring legacy", "enduring friendship"], skill:"writing", gap:"enduring", m:"lâu bền, bền vững theo thời gian", e:"Their friendship has proven remarkably enduring over the decades."},
+  {w:"realm", ipa:"/rɛlm/", topic:"heritage", pos:"n",  syn:["domain", "sphere"], col:["the realm of possibility", "digital realm"], skill:"writing", gap:"realm", m:"lĩnh vực, phạm vi; vương quốc", e:"The discovery opened up a whole new realm of possibilities."},
+  {w:"speculative", ipa:"/ˈspɛkjʊlətɪv/", topic:"business", pos:"adj",  syn:["uncertain", "hypothetical"], col:["speculative investment", "highly speculative"], skill:"writing", gap:"speculative", m:"mang tính suy đoán, đầu cơ", e:"Investors were warned that the project was highly speculative."},
+  {w:"embed", ipa:"/ɪmˈbɛd/", topic:"life", pos:"v",  syn:["implant", "insert"], col:["embed a chip", "deeply embedded"], skill:"writing", gap:"embedded", m:"gắn chặt, cắm sâu, nhúng vào", e:"The company embedded a tracking chip in every product."},
+  {w:"oppose", ipa:"/əˈpoʊz/", topic:"debate", pos:"v",  syn:["object to", "resist"], col:["strongly oppose", "oppose a plan"], skill:"both", gap:"opposed", m:"phản đối", e:"Local residents strongly opposed the construction of the highway."},
+  {w:"associate", ipa:"/əˈsoʊʃieɪt/", topic:"debate", pos:"v",  syn:["connect", "link"], col:["associate with", "closely associated"], skill:"both", gap:"associate", m:"liên kết, gắn liền với; đồng nghiệp", e:"People often associate the color red with danger."},
+  {w:"annals", ipa:"/ˈænəlz/", topic:"heritage", pos:"n",  syn:["records", "chronicles"], col:["annals of history", "go down in the annals"], skill:"writing", gap:"annals", m:"biên niên sử, sử sách", e:"His achievements are recorded in the annals of medical history."},
+  {w:"controversial", ipa:"/ˌkɒntrəˈvɜːrʃəl/", topic:"debate", pos:"adj",  syn:["contentious", "disputed"], col:["highly controversial", "controversial decision"], skill:"both", gap:"controversial", m:"gây tranh cãi", e:"The politician's remarks sparked a controversial debate."},
+  {w:"dispute", ipa:"/dɪˈspjuːt/", topic:"debate", pos:"n",  syn:["disagreement", "conflict"], col:["border dispute", "settle a dispute"], skill:"both", gap:"dispute", m:"tranh chấp, tranh cãi", e:"The two countries are locked in a border dispute."},
+  {w:"intellectual", ipa:"/ˌɪntəˈlɛktʃuəl/", topic:"heritage", pos:"n",  syn:["scholarly", "academic"], col:["intellectual property", "intellectual debate"], skill:"writing", gap:"intellectuals", m:"trí thức; thuộc về trí tuệ", e:"The café was a gathering place for artists and intellectuals."},
+  {w:"chronicle", ipa:"/ˈkrɒnɪkəl/", topic:"heritage", pos:"v",  syn:["record", "document"], col:["chronicle events", "historical chronicle"], skill:"writing", gap:"chronicles", m:"ghi chép biên niên; biên niên sử", e:"The documentary chronicles the rise and fall of the empire."},
+  {w:"compound", ipa:"/kəmˈpaʊnd/", topic:"environment", pos:"v",  syn:["worsen", "aggravate"], col:["compound the problem", "chemical compound"], skill:"writing", gap:"compounded", m:"hợp chất; làm trầm trọng thêm", e:"Missing the deadline only compounded her stress."},
+  {w:"foster", ipa:"/ˈfɒstər/", topic:"business", pos:"v",  syn:["nurture", "encourage"], col:["foster creativity", "foster cooperation"], skill:"both", gap:"foster", m:"nuôi dưỡng, thúc đẩy (sự phát triển)", e:"The program aims to foster creativity among young students."},
+  {w:"frustrated", ipa:"/frʌˈstreɪtɪd/", topic:"life", pos:"adj",  syn:["annoyed", "exasperated"], col:["grow frustrated", "increasingly frustrated"], skill:"both", gap:"frustrated", m:"thất vọng, bực bội", e:"He grew frustrated after hours of fruitless searching."},
+  {w:"malfunction", ipa:"/ˌmælˈfʌŋkʃən/", topic:"environment", pos:"v",  syn:["breakdown", "fault"], col:["system malfunction", "technical malfunction"], skill:"both", gap:"malfunction", m:"trục trặc, hỏng hóc", e:"The spacecraft's systems began to malfunction mid-flight."},
+  {w:"anticipate", ipa:"/ænˈtɪsɪpeɪt/", topic:"business", pos:"v",  syn:["expect", "foresee"], col:["anticipate demand", "eagerly anticipate"], skill:"both", gap:"anticipate", m:"mong đợi, dự đoán trước", e:"We anticipate strong demand for the product this holiday season."},
+  {w:"drudgery", ipa:"/ˈdrʌdʒəri/", topic:"life", pos:"n",  syn:["toil", "grind"], col:["daily drudgery", "endless drudgery"], skill:"writing", gap:"drudgery", m:"công việc nhàm chán, cực nhọc", e:"Farm life in those days was full of endless drudgery."},
+  {w:"pure", ipa:"/pjʊər/", topic:"life", pos:"adj",  syn:["unadulterated", "clean"], col:["pure water", "pure coincidence"], skill:"both", gap:"pure", m:"tinh khiết, thuần khiết", e:"The spring water here is remarkably pure."},
+  {w:"variation", ipa:"/ˌvɛəriˈeɪʃən/", topic:"life", pos:"n",  syn:["difference", "fluctuation"], col:["significant variation", "wide variation"], skill:"writing", gap:"variation", m:"sự biến đổi, biến thể", e:"There is significant variation in prices between the two stores."},
+  {w:"skeptical", ipa:"/ˈskɛptɪkəl/", topic:"debate", pos:"adj",  syn:["doubtful", "dubious"], col:["remain skeptical", "skeptical of claims"], skill:"both", gap:"skeptical", m:"hoài nghi", e:"She remained skeptical of claims that the diet worked."},
+  {w:"displace", ipa:"/dɪsˈpleɪs/", topic:"environment", pos:"v",  syn:["dislodge", "uproot"], col:["displace workers", "displace residents"], skill:"writing", gap:"displaced", m:"thay thế; làm dịch chuyển, di dời", e:"Rising sea levels have already displaced thousands of coastal residents."}
 ];
 
 data.forEach((d, i) => d.id = i);
@@ -859,6 +1128,8 @@ function onTopicChange(){
   applyListFilters();
   if(activeTab === 'flashcard') resetFlashcards();
   if(activeTab === 'quiz') startQuiz();
+  if(activeTab === 'gapfill') startGapFill();
+  if(activeTab === 'dictation') startDictation();
 }
 
 /* ---------- tabs ---------- */
@@ -871,6 +1142,8 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.getElementById('view-' + activeTab).classList.add('active');
     if(activeTab === 'flashcard') resetFlashcards();
     if(activeTab === 'quiz') startQuiz();
+    if(activeTab === 'gapfill') startGapFill();
+    if(activeTab === 'dictation') startDictation();
   });
 });
 
@@ -885,11 +1158,12 @@ function renderList(){
   tableBody.innerHTML = '';
   data.forEach(item => {
     const tr = document.createElement('tr');
+    tr.className = 'main-row';
     tr.dataset.id = item.id;
     if(item.learned) tr.classList.add('learned');
     const t = TOPICS[item.topic];
     tr.innerHTML = `
-      <td class="no">${String(item.id + 1).padStart(2, '0')}</td>
+      <td class="no"><button class="expand-btn" title="Xem chi tiết" aria-label="Xem chi tiết">▶</button> ${String(item.id + 1).padStart(2, '0')}</td>
       <td><input type="checkbox" class="checkbox" ${item.learned ? 'checked' : ''}></td>
       <td class="word"><span class="headword">${item.w}</span><button class="speak-btn" data-speak="${item.w}" title="Nghe phát âm" aria-label="Nghe phát âm">🔊</button><span class="ipa">${item.ipa}</span><span class="pos-tag" title="${POS_LABELS[item.pos].full}">${POS_LABELS[item.pos].abbr}</span></td>
       <td class="topic"><span class="pill" style="background:${t.color}">${t.label}</span></td>
@@ -897,6 +1171,30 @@ function renderList(){
       <td class="example">${item.e}</td>
     `;
     tableBody.appendChild(tr);
+
+    const trDetail = document.createElement('tr');
+    trDetail.className = 'detail-row hidden';
+    trDetail.dataset.id = item.id;
+    const skill = SKILL_LABELS[item.skill];
+    trDetail.innerHTML = `
+      <td colspan="6">
+        <div class="detail-grid">
+          <div>
+            <div class="detail-block-title">Collocation thường gặp</div>
+            <div class="detail-chip-row">${item.col.map(c => `<span class="detail-chip">${c}</span>`).join('')}</div>
+          </div>
+          <div>
+            <div class="detail-block-title">Từ đồng nghĩa</div>
+            <div class="detail-chip-row">${item.syn.map(s => `<span class="detail-chip">${s}</span>`).join('')}</div>
+          </div>
+          <div>
+            <div class="detail-block-title">Phù hợp kỹ năng</div>
+            <div class="detail-chip-row"><span class="skill-tag" title="${skill.full}">${skill.abbr}</span></div>
+          </div>
+        </div>
+      </td>
+    `;
+    tableBody.appendChild(trDetail);
   });
   applyListFilters();
 }
@@ -904,7 +1202,7 @@ function renderList(){
 function applyListFilters(){
   const query = searchInput.value.trim().toLowerCase();
   let visibleCount = 0;
-  document.querySelectorAll('#tableBody tr').forEach(tr => {
+  document.querySelectorAll('#tableBody tr.main-row').forEach(tr => {
     const item = data[tr.dataset.id];
     const matchesTopic = topicFilter === 'all' || item.topic === topicFilter;
     const matchesQuery = !query || item.w.toLowerCase().includes(query) || item.m.toLowerCase().includes(query);
@@ -912,6 +1210,11 @@ function applyListFilters(){
     const visible = matchesTopic && matchesQuery && matchesStatus;
     tr.classList.toggle('hidden', !visible);
     if(visible) visibleCount++;
+
+    const detailRow = document.querySelector(`#tableBody tr.detail-row[data-id="${item.id}"]`);
+    if(detailRow){
+      detailRow.classList.toggle('hidden', !visible || !item.expanded);
+    }
   });
   emptyState.classList.toggle('show', visibleCount === 0);
 }
@@ -921,6 +1224,17 @@ tableBody.addEventListener('click', e => {
   if(speakBtn){
     e.stopPropagation();
     speak(speakBtn.dataset.speak);
+    return;
+  }
+  if(e.target.classList.contains('checkbox')) return;
+
+  const mainRow = e.target.closest('tr.main-row');
+  if(mainRow){
+    const item = data[mainRow.dataset.id];
+    item.expanded = !item.expanded;
+    mainRow.classList.toggle('expanded', item.expanded);
+    const detailRow = document.querySelector(`#tableBody tr.detail-row[data-id="${item.id}"]`);
+    if(detailRow) detailRow.classList.toggle('hidden', !item.expanded);
   }
 });
 
@@ -966,8 +1280,11 @@ const fcWord = document.getElementById('fcWord');
 const fcIpa = document.getElementById('fcIpa');
 const fcPos = document.getElementById('fcPos');
 const fcTopicTag = document.getElementById('fcTopicTag');
+const fcSkillTag = document.getElementById('fcSkillTag');
 const fcMeaning = document.getElementById('fcMeaning');
 const fcExample = document.getElementById('fcExample');
+const fcCollocations = document.getElementById('fcCollocations');
+const fcSynonyms = document.getElementById('fcSynonyms');
 const fcPrev = document.getElementById('fcPrev');
 const fcNext = document.getElementById('fcNext');
 const fcMark = document.getElementById('fcMark');
@@ -984,8 +1301,11 @@ function resetFlashcards(){
     fcWord.textContent = 'Hết từ rồi!';
     fcIpa.textContent = '';
     fcTopicTag.textContent = '';
+    fcSkillTag.textContent = '';
     fcMeaning.textContent = 'Không còn từ nào trong bộ lọc này.';
     fcExample.textContent = '';
+    fcCollocations.innerHTML = '';
+    fcSynonyms.innerHTML = '';
     fcCounter.textContent = '0 / 0';
     fcPrev.disabled = true; fcNext.disabled = true; fcMark.style.display = 'none';
     return;
@@ -998,14 +1318,19 @@ function renderFlashcard(){
   flashcardEl.classList.remove('flipped');
   const item = data[fcOrder[fcIndex]];
   const t = TOPICS[item.topic];
+  const skill = SKILL_LABELS[item.skill];
   fcWord.textContent = item.w;
   fcIpa.textContent = item.ipa;
   fcPos.textContent = POS_LABELS[item.pos].abbr;
   fcPos.title = POS_LABELS[item.pos].full;
   fcTopicTag.textContent = t.label;
   fcTopicTag.style.background = t.color;
+  fcSkillTag.textContent = skill.abbr;
+  fcSkillTag.title = skill.full;
   fcMeaning.textContent = item.m;
   fcExample.textContent = item.e;
+  fcCollocations.innerHTML = item.col.map(c => `<span class="fc-extra-chip">${c}</span>`).join('');
+  fcSynonyms.innerHTML = item.syn.map(s => `<span class="fc-extra-chip">${s}</span>`).join('');
   fcCounter.textContent = `${fcIndex + 1} / ${fcOrder.length}`;
   fcPrev.disabled = fcIndex === 0;
   fcNext.disabled = fcIndex === fcOrder.length - 1;
@@ -1191,6 +1516,235 @@ function finishQuiz(){
 }
 
 quizRestart.addEventListener('click', startQuiz);
+
+/* ================= GAP-FILL VIEW ================= */
+const GAP_LEN = 10;
+let gapQuestions = [];
+let gapIndex = 0;
+let gapScore = 0;
+let gapAnswered = false;
+
+const gapActive = document.getElementById('gapActive');
+const gapResult = document.getElementById('gapResult');
+const gapProgress = document.getElementById('gapProgress');
+const gapScoreLive = document.getElementById('gapScoreLive');
+const gapSentence = document.getElementById('gapSentence');
+const gapMeaningHint = document.getElementById('gapMeaningHint');
+const gapOptions = document.getElementById('gapOptions');
+const gapNextBtn = document.getElementById('gapNextBtn');
+const gapFinalScore = document.getElementById('gapFinalScore');
+const gapFinalMsg = document.getElementById('gapFinalMsg');
+const gapRestart = document.getElementById('gapRestart');
+
+function blankSentence(item){
+  const re = new RegExp('\\b' + item.gap.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
+  return item.e.replace(re, '<span class="blank">_____</span>');
+}
+
+function startGapFill(){
+  const pool = currentPool();
+  const n = Math.min(GAP_LEN, pool.length);
+  gapQuestions = shuffleArr(pool).slice(0, n);
+  gapIndex = 0;
+  gapScore = 0;
+  gapResult.classList.remove('show');
+  gapActive.style.display = 'block';
+  if(n === 0){
+    gapSentence.innerHTML = 'Không có câu nào trong bộ lọc này';
+    gapMeaningHint.textContent = '';
+    gapOptions.innerHTML = '';
+    gapProgress.textContent = '';
+    return;
+  }
+  renderGapQuestion();
+}
+
+function renderGapQuestion(){
+  gapAnswered = false;
+  gapNextBtn.classList.remove('show');
+  const item = gapQuestions[gapIndex];
+  gapProgress.textContent = `Câu ${gapIndex + 1} / ${gapQuestions.length}`;
+  gapScoreLive.textContent = `Điểm: ${gapScore}`;
+  gapSentence.innerHTML = blankSentence(item);
+  gapMeaningHint.textContent = `Gợi ý nghĩa: ${item.m}`;
+
+  const distractorPool = data.filter(d => d.id !== item.id);
+  const distractors = shuffleArr(distractorPool).slice(0, 3).map(d => d.w);
+  const choices = shuffleArr([item.w, ...distractors]);
+
+  gapOptions.innerHTML = '';
+  choices.forEach(choice => {
+    const btn = document.createElement('button');
+    btn.className = 'gap-option';
+    btn.textContent = choice;
+    btn.addEventListener('click', () => handleGapAnswer(btn, choice, item.w));
+    gapOptions.appendChild(btn);
+  });
+}
+
+function handleGapAnswer(btn, choice, correctAnswer){
+  if(gapAnswered) return;
+  gapAnswered = true;
+  const isCorrect = choice === correctAnswer;
+  if(isCorrect) gapScore++;
+  document.querySelectorAll('.gap-option').forEach(opt => {
+    opt.disabled = true;
+    if(opt.textContent === correctAnswer) opt.classList.add('correct');
+    else if(opt === btn) opt.classList.add('wrong');
+  });
+  gapScoreLive.textContent = `Điểm: ${gapScore}`;
+  gapNextBtn.classList.add('show');
+  gapNextBtn.textContent = gapIndex === gapQuestions.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo';
+}
+
+gapNextBtn.addEventListener('click', () => {
+  if(gapIndex < gapQuestions.length - 1){
+    gapIndex++;
+    renderGapQuestion();
+  } else {
+    finishGapFill();
+  }
+});
+
+function finishGapFill(){
+  gapActive.style.display = 'none';
+  gapResult.classList.add('show');
+  gapFinalScore.textContent = `${gapScore} / ${gapQuestions.length}`;
+  const ratio = gapScore / gapQuestions.length;
+  gapFinalMsg.textContent = ratio === 1 ? 'Hoàn hảo! Bạn dùng đúng từ trong mọi ngữ cảnh.' :
+    ratio >= 0.7 ? 'Khá tốt — chú ý thêm những từ dễ nhầm ngữ cảnh.' :
+    'Nên ôn lại ví dụ câu ở Flashcard trước khi làm lại.';
+}
+
+gapRestart.addEventListener('click', startGapFill);
+
+/* ================= DICTATION VIEW ================= */
+const DICT_LEN = 10;
+let dictOrder = [];
+let dictIndex = 0;
+let dictScore = 0;
+let dictAnswered = false;
+
+const dictActive = document.getElementById('dictActive');
+const dictReady = document.getElementById('dictReady');
+const dictStartBtn = document.getElementById('dictStartBtn');
+const dictResultEl = document.getElementById('dictResult');
+const dictProgress = document.getElementById('dictProgress');
+const dictScoreLive = document.getElementById('dictScoreLive');
+const dictPlayBtn = document.getElementById('dictPlayBtn');
+const dictInput = document.getElementById('dictInput');
+const dictFeedback = document.getElementById('dictFeedback');
+const dictCheckBtn = document.getElementById('dictCheckBtn');
+const dictNextBtn = document.getElementById('dictNextBtn');
+const dictFinalScore = document.getElementById('dictFinalScore');
+const dictFinalMsg = document.getElementById('dictFinalMsg');
+const dictRestart = document.getElementById('dictRestart');
+
+function startDictation(){
+  const pool = currentPool();
+  const n = Math.min(DICT_LEN, pool.length);
+  dictOrder = shuffleArr(pool).slice(0, n).map(d => d.id);
+  dictIndex = 0;
+  dictScore = 0;
+  dictResultEl.classList.remove('show');
+
+  if(n === 0){
+    dictReady.style.display = 'none';
+    dictActive.style.display = 'block';
+    dictProgress.textContent = '';
+    dictHideAllForEmpty();
+    return;
+  }
+
+  // Wait for explicit user action before playing any audio,
+  // so switching into this tab never triggers unexpected sound.
+  dictActive.style.display = 'none';
+  dictReady.style.display = 'block';
+}
+
+dictStartBtn.addEventListener('click', () => {
+  dictReady.style.display = 'none';
+  dictActive.style.display = 'block';
+  renderDictWord();
+});
+
+function dictHideAllForEmpty(){
+  dictInput.disabled = true;
+  dictInput.placeholder = 'Không có từ nào trong bộ lọc này';
+  dictCheckBtn.disabled = true;
+}
+
+function renderDictWord(){
+  dictAnswered = false;
+  const item = data[dictOrder[dictIndex]];
+  dictProgress.textContent = `Từ ${dictIndex + 1} / ${dictOrder.length}`;
+  dictScoreLive.textContent = `Điểm: ${dictScore}`;
+  dictInput.value = '';
+  dictInput.disabled = false;
+  dictInput.className = 'dict-input';
+  dictFeedback.textContent = '';
+  dictFeedback.className = 'dict-feedback';
+  dictCheckBtn.disabled = false;
+  dictCheckBtn.style.display = 'inline-block';
+  dictNextBtn.classList.remove('show');
+  speak(item.w);
+  dictInput.focus();
+}
+
+function checkDictAnswer(){
+  if(dictAnswered) return;
+  const item = data[dictOrder[dictIndex]];
+  const userAnswer = normalizeWord(dictInput.value);
+  const correctAnswer = normalizeWord(item.w);
+  if(!userAnswer) return;
+
+  dictAnswered = true;
+  const isCorrect = userAnswer === correctAnswer;
+  if(isCorrect) dictScore++;
+
+  dictInput.disabled = true;
+  dictInput.className = 'dict-input ' + (isCorrect ? 'correct' : 'wrong');
+  dictFeedback.textContent = isCorrect ? 'Chính xác!' : `Chưa đúng — chính tả đúng là "${item.w}"`;
+  dictFeedback.className = 'dict-feedback ' + (isCorrect ? 'correct' : 'wrong');
+  dictScoreLive.textContent = `Điểm: ${dictScore}`;
+  dictCheckBtn.style.display = 'none';
+  dictNextBtn.classList.add('show');
+  dictNextBtn.textContent = dictIndex === dictOrder.length - 1 ? 'Xem kết quả' : 'Từ tiếp theo';
+}
+
+dictPlayBtn.addEventListener('click', () => {
+  if(dictOrder.length) speak(data[dictOrder[dictIndex]].w);
+});
+
+dictCheckBtn.addEventListener('click', checkDictAnswer);
+dictInput.addEventListener('keydown', e => {
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    if(!dictAnswered) checkDictAnswer();
+    else if(dictNextBtn.classList.contains('show')) dictNextBtn.click();
+  }
+});
+
+dictNextBtn.addEventListener('click', () => {
+  if(dictIndex < dictOrder.length - 1){
+    dictIndex++;
+    renderDictWord();
+  } else {
+    finishDictation();
+  }
+});
+
+function finishDictation(){
+  dictActive.style.display = 'none';
+  dictResultEl.classList.add('show');
+  dictFinalScore.textContent = `${dictScore} / ${dictOrder.length}`;
+  const ratio = dictScore / dictOrder.length;
+  dictFinalMsg.textContent = ratio === 1 ? 'Chính tả hoàn hảo!' :
+    ratio >= 0.7 ? 'Khá tốt — nghe lại vài từ hay sai chính tả nhé.' :
+    'Nên luyện nghe kỹ hơn với Flashcard trước khi làm lại.';
+}
+
+dictRestart.addEventListener('click', startDictation);
 
 /* ---------- init ---------- */
 renderTopicPills();
