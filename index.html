@@ -789,11 +789,11 @@
 <div class="wrap">
 
   <header>
-    <p class="tag">Bộ sưu tập cá nhân · 60 mục</p>
+    <p class="tag">Bộ sưu tập cá nhân · <span id="totalTag">60</span> mục</p>
     <h1>Nhật ký <em>từ vựng</em></h1>
     <p class="lede">Một danh mục các từ tiếng Anh học thuật, được sắp xếp như hiện vật trong kho lưu trữ — mỗi từ đi kèm phiên âm, nghĩa, chủ đề và một câu ví dụ để ghi nhớ theo ngữ cảnh.</p>
     <div class="stats">
-      <div class="stat"><span class="num">60</span><span class="label">Tổng số từ</span></div>
+      <div class="stat"><span class="num" id="totalCount">60</span><span class="label">Tổng số từ</span></div>
       <div class="stat"><span class="num" id="learnedCount">0</span><span class="label">Đã học</span></div>
       <div class="stat"><span class="num" id="remainingCount">60</span><span class="label">Còn lại</span></div>
     </div>
@@ -802,7 +802,7 @@
   <section class="lookup-box">
     <div class="lookup-head">
       <span class="lookup-title">Tra từ khác</span>
-      <span class="lookup-sub">Không có trong 60 từ trên? Tra nghĩa & phát âm ngay tại đây.</span>
+      <span class="lookup-sub">Không có trong <span id="totalLookupHint">60</span> từ trên? Tra nghĩa & phát âm ngay tại đây.</span>
     </div>
     <div class="lookup-form">
       <div class="lookup-input-wrap">
@@ -1056,7 +1056,12 @@ const data = [
   {w:"pure", ipa:"/pjʊər/", topic:"life", pos:"adj",  syn:["unadulterated", "clean"], col:["pure water", "pure coincidence"], skill:"both", gap:"pure", m:"tinh khiết, thuần khiết", e:"The spring water here is remarkably pure."},
   {w:"variation", ipa:"/ˌvɛəriˈeɪʃən/", topic:"life", pos:"n",  syn:["difference", "fluctuation"], col:["significant variation", "wide variation"], skill:"writing", gap:"variation", m:"sự biến đổi, biến thể", e:"There is significant variation in prices between the two stores."},
   {w:"skeptical", ipa:"/ˈskɛptɪkəl/", topic:"debate", pos:"adj",  syn:["doubtful", "dubious"], col:["remain skeptical", "skeptical of claims"], skill:"both", gap:"skeptical", m:"hoài nghi", e:"She remained skeptical of claims that the diet worked."},
-  {w:"displace", ipa:"/dɪsˈpleɪs/", topic:"environment", pos:"v",  syn:["dislodge", "uproot"], col:["displace workers", "displace residents"], skill:"writing", gap:"displaced", m:"thay thế; làm dịch chuyển, di dời", e:"Rising sea levels have already displaced thousands of coastal residents."}
+  {w:"displace", ipa:"/dɪsˈpleɪs/", topic:"environment", pos:"v",  syn:["dislodge", "uproot"], col:["displace workers", "displace residents"], skill:"writing", gap:"displaced", m:"thay thế; làm dịch chuyển, di dời", e:"Rising sea levels have already displaced thousands of coastal residents."},
+  {w:"throng", ipa:"/θrɒŋ/", topic:"life", pos:"v",  syn:["crowd", "swarm"], col:["throng the streets", "a throng of people"], skill:"writing", gap:"throng", m:"đám đông; kéo đến, tụ tập đông đúc", e:"Thousands of fans throng the streets during the annual festival."},
+  {w:"assemble", ipa:"/əˈsɛmbəl/", topic:"debate", pos:"v",  syn:["gather", "convene"], col:["assemble outside", "assemble peacefully"], skill:"both", gap:"assembled", m:"tập hợp, tụ họp (có tổ chức)", e:"Hundreds of protesters assembled outside the government building."},
+  {w:"disperse", ipa:"/dɪˈspɜːrs/", topic:"debate", pos:"v",  syn:["scatter", "break up"], col:["disperse a crowd", "disperse peacefully"], skill:"both", gap:"disperse", m:"giải tán, phân tán", e:"Police used water cannons to disperse the crowd."},
+  {w:"discourse", ipa:"/ˈdɪskɔːrs/", topic:"debate", pos:"n",  syn:["dialogue", "debate"], col:["public discourse", "political discourse"], skill:"writing", gap:"discourse", m:"diễn ngôn; sự bàn luận, thảo luận công khai", e:"Public discourse on climate change has intensified in recent years."},
+  {w:"spontaneous", ipa:"/spɒnˈteɪniəs/", topic:"life", pos:"adj",  syn:["impulsive", "unplanned"], col:["spontaneous reaction", "spontaneous applause"], skill:"both", gap:"spontaneous", m:"tự phát, bộc phát (không có kế hoạch trước)", e:"The crowd broke into spontaneous applause after the announcement."}
 ];
 
 data.forEach((d, i) => d.id = i);
@@ -1068,11 +1073,17 @@ let statusFilter = 'all';
 
 const learnedCountEl = document.getElementById('learnedCount');
 const remainingCountEl = document.getElementById('remainingCount');
+const totalCountEl = document.getElementById('totalCount');
+const totalTagEl = document.getElementById('totalTag');
+const totalLookupHintEl = document.getElementById('totalLookupHint');
 
 function updateStats(){
   const learned = data.filter(d => d.learned).length;
   learnedCountEl.textContent = learned;
   remainingCountEl.textContent = data.length - learned;
+  totalCountEl.textContent = data.length;
+  totalTagEl.textContent = data.length;
+  totalLookupHintEl.textContent = data.length;
 }
 
 function currentPool(){
